@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:force": "vite --force",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
@@ -12,11 +13,16 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
     "dexie": "^4.3.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "sql.js": "^1.14.1",
-    "uuid": "^9.0.1"
+    "three": "^0.184.0",
+    "uuid": "^9.0.1",
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

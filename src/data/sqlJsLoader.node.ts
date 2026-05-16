@@ -1,9 +1,10 @@
 import type { SqlJsStatic } from 'sql.js';
+import initSqlJsModule from 'sql.js/dist/sql-wasm.js';
+import { resolveInitSqlJs } from './resolveInitSqlJs';
 
 export async function loadSqlJsNode(): Promise<SqlJsStatic> {
-  const initSqlJs = (await import('sql.js/dist/sql-wasm.js')).default;
+  const initSqlJs = resolveInitSqlJs(initSqlJsModule);
   const { join } = await import('path');
   const wasmPath = join(process.cwd(), 'node_modules/sql.js/dist/sql-wasm.wasm');
-  const module = await initSqlJs({ locateFile: () => wasmPath });
-  return module as SqlJsStatic;
+  return initSqlJs({ locateFile: () => wasmPath });
 }

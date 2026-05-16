@@ -32,6 +32,8 @@ import { startBehaviorSimulation } from './behavior/simulate';
 import { ContextMode } from './core/escalation/ContextMode';
 import { OnboardingFlow } from './pages/Onboarding/OnboardingFlow';
 import { loadOnboardingProfile } from './profile/onboardingProfile';
+import { usePresenceSync } from './hooks/usePresenceSync';
+import { useAppStore } from './store/useAppStore';
 
 export default function App() {
   const services = useAppServices();
@@ -41,6 +43,7 @@ export default function App() {
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  usePresenceSync(!showOnboarding);
 
   const refreshVisual = useCallback(
     async (contextMode?: ContextMode) => {
@@ -99,6 +102,11 @@ export default function App() {
   }, [services, refreshVisual]);
 
   const handleOnboardingComplete = useCallback(async () => {
+    const profile = await loadOnboardingProfile();
+    useAppStore.getState().hydrate({
+      onboardingComplete: true,
+      companionName: profile.companionName ?? 'ORIENT',
+    });
     setShowOnboarding(false);
     await reloadTopics();
     await refreshVisual();

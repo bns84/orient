@@ -12,8 +12,12 @@
 import { orientDb, TopicRow } from './orientDb';
 import { logEvent } from './events';
 
-function makeKey() {
+export function makeTopicKey() {
   return 't_' + Math.random().toString(16).slice(2) + '_' + Date.now().toString(16);
+}
+
+function makeKey() {
+  return makeTopicKey();
 }
 
 function titleFromPrompt(p: string) {

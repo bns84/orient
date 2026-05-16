@@ -8,7 +8,9 @@ import { applySchemaMigrations } from './schema';
 import { loadSqliteBlob, saveSqliteBlob } from './idbPersist';
 import { migrateDexieCoreStoreIfNeeded } from './migrateDexieCore';
 import { SqliteLocalDatabase } from '../infrastructure/storage/SqliteLocalDatabase';
+import { ImpulseRepositoryLocal } from '../infrastructure/storage/ImpulseRepository.local';
 import type { LocalDatabase } from '../infrastructure/storage/LocalDatabase';
+import { migrateImpulseEncryptionIfNeeded } from './migrateImpulseEncryption';
 
 export class OrientDatabase {
   readonly local: SqliteLocalDatabase;
@@ -33,6 +35,8 @@ export class OrientDatabase {
     instance = new OrientDatabase(SQL, raw, () => instance.schedulePersist());
 
     await migrateDexieCoreStoreIfNeeded(raw);
+    const impulseRepo = new ImpulseRepositoryLocal(instance.local);
+    await migrateImpulseEncryptionIfNeeded(raw, impulseRepo);
     await instance.persist();
     return instance;
   }

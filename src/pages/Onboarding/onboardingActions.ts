@@ -1,4 +1,5 @@
-import { createTopicFromPrompt } from '../../db/topics';
+import { makeTopicKey } from '../../db/topics';
+import { useAppStore } from '../../store/useAppStore';
 import { logEvent } from '../../db/events';
 import { ThreadStatus } from '../../core/threads/ThreadStatus';
 import type { AppServices } from '../../ui/wiring/AppServicesContext';
@@ -12,10 +13,9 @@ export async function finishOnboarding(
   const now = new Date();
 
   for (const title of profile.interests) {
-    const row = await createTopicFromPrompt(title, 'manual');
     await services.threadRepo.save({
-      id: row.key,
-      title: row.title,
+      id: makeTopicKey(),
+      title: title.trim(),
       status: ThreadStatus.ACTIVE,
       createdAt: now,
       updatedAt: now,
@@ -30,6 +30,10 @@ export async function finishOnboarding(
   }
 
   await saveOnboardingProfile({ ...profile, complete: true });
+  useAppStore.getState().hydrate({
+    onboardingComplete: true,
+    companionName: profile.companionName ?? 'ORIENT',
+  });
   await logEvent('onboarding.complete', { path: profile.path, interests: profile.interests.length });
 }
 

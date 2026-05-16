@@ -1,26 +1,25 @@
 /**
  * ORIENT - Presence Header Component
- * 
- * Platzhalter für die spätere Orb-Visualisierung.
- * Zeigt Präsenz und Hinweis zum Halten & Sprechen.
- * 
- * Respektiert ORIENT_DNA:
- * - Ruhe vor Geschwindigkeit (kein aufdringliches UI)
- * - Menschliche Sprache (kein "KI", kein "Bot")
- * - Companion-Gefühl (nicht Dev-Tool)
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { getPresentationHints } from '../behavior/engine';
-import { getCompanionName } from '../profile/onboardingProfile';
+import { useAppStore } from '../store/useAppStore';
+import { OrientBubble } from './Bubble/OrientBubble';
+
+const moodLabel: Record<string, string> = {
+  aktiv: 'aktiv',
+  fokussiert: 'fokussiert',
+  müde: 'müde',
+  neugierig: 'neugierig',
+  ruhe: 'ruhig',
+};
 
 export function PresenceHeader() {
   const hints = getPresentationHints();
-  const [name, setName] = useState<string | undefined>();
-
-  useEffect(() => {
-    void getCompanionName().then(setName);
-  }, []);
+  const companionName = useAppStore((s) => s.companionName);
+  const presence = useAppStore((s) => s.presence);
+  const currentMood = useAppStore((s) => s.currentMood);
 
   const line =
     hints?.tone === 'crisp'
@@ -43,22 +42,16 @@ export function PresenceHeader() {
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <div style={{ fontSize: 14, fontWeight: 600, opacity: 0.92 }}>{name ?? 'ORIENT'}</div>
+        <div style={{ fontSize: 14, fontWeight: 600, opacity: 0.92 }}>
+          {companionName || 'ORIENT'}
+        </div>
         <div style={{ fontSize: 13, opacity: 0.7 }}>{line}</div>
+        <div style={{ fontSize: 11, opacity: 0.45 }}>
+          {moodLabel[currentMood] ?? currentMood} · {presence}
+        </div>
       </div>
 
-      {/* Placeholder for Orb */}
-      <div
-        aria-hidden
-        style={{
-          width: 48,
-          height: 48,
-          borderRadius: 999,
-          border: '1px solid rgba(255,255,255,0.18)',
-          background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), rgba(255,255,255,0.05))',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.25) inset',
-        }}
-      />
+      <OrientBubble state={presence} width={120} height={120} />
     </div>
   );
 }

@@ -7,17 +7,13 @@ declare module '*.wasm?url' {
 }
 
 declare module 'sql.js/dist/sql-wasm-browser.js' {
-  import type { SqlJsStatic } from 'sql.js';
-  export default function initSqlJs(config?: {
-    locateFile?: (file: string) => string;
-  }): Promise<SqlJsStatic>;
+  const initSqlJs: unknown;
+  export default initSqlJs;
 }
 
 declare module 'sql.js/dist/sql-wasm.js' {
-  import type { SqlJsStatic } from 'sql.js';
-  export default function initSqlJs(config?: {
-    locateFile?: (file: string) => string;
-  }): Promise<SqlJsStatic>;
+  const initSqlJs: unknown;
+  export default initSqlJs;
 }
 
 interface ImportMetaEnv {

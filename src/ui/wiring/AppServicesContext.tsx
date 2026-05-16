@@ -9,7 +9,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { initOrientDataLayer } from '../../data/database';
-
+import { initAppStore } from '../../store/initAppStore';
 import { createAppServices } from './createAppServices';
 
 
@@ -39,6 +39,7 @@ export function AppServicesProvider({ children }: { children: React.ReactNode })
       try {
 
         const { db } = await initOrientDataLayer();
+        await initAppStore(db);
 
         if (!cancelled) {
 

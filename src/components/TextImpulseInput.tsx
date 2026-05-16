@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import { useAppServices } from '../ui/wiring/AppServicesContext';
 import { logEvent } from '../db/events';
+import { useAppStore } from '../store/useAppStore';
 
 type Props = {
   threadId?: string | null;
@@ -23,6 +24,7 @@ export function TextImpulseInput({ threadId, onCaptured }: Props) {
 
     setStatus('saving');
     setMessage(null);
+    useAppStore.getState().setPresence('think');
 
     const ctx = await contextService.getCurrent();
     const res = await captureImpulse.execute(
@@ -36,6 +38,7 @@ export function TextImpulseInput({ threadId, onCaptured }: Props) {
       setStatus('ok');
       setMessage('Gespeichert.');
       onCaptured?.();
+      useAppStore.getState().pulsePresence('ready', 1600);
       window.setTimeout(() => {
         setStatus('idle');
         setMessage(null);

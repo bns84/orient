@@ -8,6 +8,7 @@ import React from 'react';
 import { useVoiceRecorder } from '../hooks/useVoiceRecorder';
 import { useAppServices } from '../ui/wiring/AppServicesContext';
 import { logEvent } from '../db/events';
+import { useAppStore } from '../store/useAppStore';
 
 function msToClock(ms: number) {
   const s = Math.floor(ms / 1000);
@@ -23,6 +24,8 @@ type Props = {
 
 export function VoiceHoldButton({ threadId, onImpulseCaptured }: Props) {
   const { captureImpulse, contextService } = useAppServices();
+  const setPresence = useAppStore((s) => s.setPresence);
+  const pulsePresence = useAppStore((s) => s.pulsePresence);
 
   const { status, error, durationMs, start, stop } = useVoiceRecorder({
     onTranscriptReady: async (voiceId, transcript) => {
@@ -38,11 +41,22 @@ export function VoiceHoldButton({ threadId, onImpulseCaptured }: Props) {
       if (res.ok) {
         await logEvent('impulse.captured', { source: 'voice', voiceId });
         onImpulseCaptured?.();
+        pulsePresence('ready', 1800);
       }
     },
   });
 
   const isRecording = status === 'recording' || status === 'saving';
+
+  React.useEffect(() => {
+    if (status === 'recording') {
+      setPresence('listen', { hold: true });
+    } else if (status === 'saving') {
+      setPresence('think', { hold: true });
+    } else if (status === 'idle') {
+      setPresence('rest', { hold: true });
+    }
+  }, [status, setPresence]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

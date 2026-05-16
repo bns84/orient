@@ -24,6 +24,11 @@ export interface ImpulseRepository {
   getById(id: string): Promise<Impulse | null>;
 
   /**
+   * Alle Impulse (Migration, Export, Debug)
+   */
+  getAll(): Promise<Impulse[]>;
+
+  /**
    * Findet alle Impulse eines Threads
    */
   findByThread(threadId: string): Promise<Impulse[]>;

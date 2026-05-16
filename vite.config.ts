@@ -41,7 +41,14 @@ export default defineConfig({
   ],
   assetsInclude: ['**/*.wasm'],
   optimizeDeps: {
-    exclude: ['sql.js'],
+    include: [
+      'sql.js/dist/sql-wasm-browser.js',
+      'three',
+      '@react-three/fiber',
+      '@react-three/drei',
+      '@react-three/postprocessing',
+      'postprocessing',
+    ],
   },
   build: {
     target: 'es2022',

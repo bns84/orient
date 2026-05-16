@@ -1,19 +1,13 @@
 /**
  * ORIENT - Topic List Component
- * 
- * Liste von Topics mit Ranking nach Interest.
- * 
- * Respektiert ORIENT_DNA:
- * - Ruhe vor Geschwindigkeit (weiches Ranking)
- * - Keine Favoritenliste (nur weiche Gewichtung)
+ *
+ * Zeigt Thread-Themen (kanonisch über `topics`-Prop).
  */
 
 import React from 'react';
 import { rankTopics } from '../db/interest';
 import { getPresentationHints } from '../behavior/engine';
 import { TopicCard } from './TopicCard';
-import { useTopics } from '../hooks/useTopics';
-import { TopicRow } from '../db/orientDb';
 
 type Topic = {
   key: string;
@@ -27,38 +21,33 @@ type Topic = {
 };
 
 type Props = {
-  topics?: Topic[]; // systemTopics (optional)
+  topics?: Topic[];
   selectedKey?: string | null;
   onSelectTopic?: (key: string) => void;
 };
 
-export function TopicList({ topics: systemTopics = [], selectedKey, onSelectTopic }: Props) {
-  const dbTopics = useTopics(); // from DB
-  const hints = getPresentationHints();
+function dedupeByKey(topics: Topic[]): Topic[] {
+  const byKey = new Map<string, Topic>();
+  for (const t of topics) {
+    if (!byKey.has(t.key)) {
+      byKey.set(t.key, t);
+    }
+  }
+  return [...byKey.values()];
+}
 
-  // Merge: systemTopics first, then dbTopics
-  const allTopics = React.useMemo(() => {
-    const db = dbTopics.map((t: TopicRow) => ({
-      key: t.key,
-      title: t.title,
-      subtitle: undefined,
-      summary: t.summary,
-      bullets: undefined,
-      link: undefined,
-      source: undefined,
-      isNew: t.isNew ?? false,
-    }));
-    return [...systemTopics, ...db];
-  }, [dbTopics, systemTopics]);
+export function TopicList({ topics = [], selectedKey, onSelectTopic }: Props) {
+  const hints = getPresentationHints();
+  const allTopics = React.useMemo(() => dedupeByKey(topics), [topics]);
 
   const [ranked, setRanked] = React.useState<Topic[]>(allTopics);
 
   React.useEffect(() => {
     let alive = true;
-    (async () => {
+    void (async () => {
       const r = await rankTopics(allTopics);
       if (!alive) return;
-      setRanked(r);
+      setRanked(dedupeByKey(r));
     })();
     return () => {
       alive = false;

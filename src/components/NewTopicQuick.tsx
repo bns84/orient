@@ -10,7 +10,13 @@
  */
 
 import React from 'react';
-import { createTopicFromPrompt } from '../db/topics';
+import { makeTopicKey } from '../db/topics';
+
+function titleFromPrompt(p: string) {
+  const t = p.trim();
+  if (!t) return 'Neues Thema';
+  return t.length > 64 ? t.slice(0, 63) + '…' : t;
+}
 import { useAppServices } from '../ui/wiring/AppServicesContext';
 import { ThreadStatus } from '../core/threads/ThreadStatus';
 
@@ -24,11 +30,10 @@ export function NewTopicQuick({ onCreated }: Props) {
 
   const onCreate = async () => {
     if (!v.trim()) return;
-    const row = await createTopicFromPrompt(v.trim(), 'manual');
     const now = new Date();
     await threadRepo.save({
-      id: row.key,
-      title: row.title,
+      id: makeTopicKey(),
+      title: titleFromPrompt(v),
       status: ThreadStatus.ACTIVE,
       createdAt: now,
       updatedAt: now,

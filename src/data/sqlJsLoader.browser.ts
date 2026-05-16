@@ -1,10 +1,11 @@
 import type { SqlJsStatic } from 'sql.js';
+import initSqlJsModule from 'sql.js/dist/sql-wasm-browser.js';
+import wasmUrl from 'sql.js/dist/sql-wasm-browser.wasm?url';
+import { resolveInitSqlJs } from './resolveInitSqlJs';
 
 export async function loadSqlJsBrowser(): Promise<SqlJsStatic> {
-  const initSqlJs = (await import('sql.js/dist/sql-wasm-browser.js')).default;
-  const wasmUrl = (await import('sql.js/dist/sql-wasm-browser.wasm?url')).default;
-  const module = await initSqlJs({
+  const initSqlJs = resolveInitSqlJs(initSqlJsModule);
+  return initSqlJs({
     locateFile: (file: string) => (file.endsWith('.wasm') ? wasmUrl : file),
   });
-  return module as SqlJsStatic;
 }

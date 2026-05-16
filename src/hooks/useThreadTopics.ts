@@ -32,7 +32,10 @@ export function useThreadTopics() {
       };
 
       const cards: ThreadTopicCard[] = [];
+      const seen = new Set<string>();
       for (const thread of threads) {
+        if (seen.has(thread.id)) continue;
+        seen.add(thread.id);
         const snapshot = await threadQuery.getThreadSnapshot(thread.id, opts);
         cards.push({
           key: thread.id,
