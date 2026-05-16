@@ -222,6 +222,7 @@ describe('Impulse Core', () => {
 
     expect(impulse.state).toBe(ImpulseState.CLOUD);
   });
+  });
 
   describe('DNA-Konformität', () => {
     it('is a snapshot - no updatedAt (DNA: Momentaufnahme)', () => {

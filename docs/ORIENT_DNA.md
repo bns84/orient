@@ -1,5 +1,7 @@
 # ORIENT — DNA
 
+> **Gesamtkonzept:** [`ORIENT_KONZEPT.md`](./ORIENT_KONZEPT.md)
+
 ORIENT ist ein persönlicher Denk-, Orientierungs- und Entscheidungs-Companion.
 
 ORIENT ist kein Tool.

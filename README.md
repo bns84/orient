@@ -45,7 +45,10 @@ Alle Systementscheidungen sind der **ORIENT_DNA** untergeordnet. Siehe `docs/ORI
 
 ```bash
 npm install
+cp .env.example .env.local   # optional: VITE_AI_ENABLED=false
 ```
+
+**Dokumentation:** Gesamtkonzept → [`docs/ORIENT_KONZEPT.md`](docs/ORIENT_KONZEPT.md) · Cursor-Schritte → [`docs/ORIENT_Cursor_v1.md`](docs/ORIENT_Cursor_v1.md)
 
 ### Development
 

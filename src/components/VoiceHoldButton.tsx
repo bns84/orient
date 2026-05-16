@@ -1,15 +1,13 @@
 /**
  * ORIENT - Voice Hold Button
- * 
- * Press & Hold to record voice.
- * 
- * Respektiert ORIENT_DNA:
- * - Ruhe vor Geschwindigkeit (einfache Interaktion)
- * - Transparenz (Status sichtbar)
+ *
+ * Press & Hold → Audio in Dexie → Impulse im Gedächtnis (nach Stub-Transkript)
  */
 
 import React from 'react';
 import { useVoiceRecorder } from '../hooks/useVoiceRecorder';
+import { useAppServices } from '../ui/wiring/AppServicesContext';
+import { logEvent } from '../db/events';
 
 function msToClock(ms: number) {
   const s = Math.floor(ms / 1000);
@@ -18,8 +16,31 @@ function msToClock(ms: number) {
   return `${mm}:${ss}`;
 }
 
-export function VoiceHoldButton() {
-  const { status, error, durationMs, start, stop } = useVoiceRecorder();
+type Props = {
+  threadId?: string | null;
+  onImpulseCaptured?: () => void;
+};
+
+export function VoiceHoldButton({ threadId, onImpulseCaptured }: Props) {
+  const { captureImpulse, contextService } = useAppServices();
+
+  const { status, error, durationMs, start, stop } = useVoiceRecorder({
+    onTranscriptReady: async (voiceId, transcript) => {
+      const ctx = await contextService.getCurrent();
+      const res = await captureImpulse.execute(
+        {
+          transcript,
+          payloadRef: `voice:${voiceId}`,
+          threadId: threadId ?? undefined,
+        },
+        { contextMode: ctx.mode, timestamp: new Date() },
+      );
+      if (res.ok) {
+        await logEvent('impulse.captured', { source: 'voice', voiceId });
+        onImpulseCaptured?.();
+      }
+    },
+  });
 
   const isRecording = status === 'recording' || status === 'saving';
 
@@ -28,19 +49,18 @@ export function VoiceHoldButton() {
       <button
         onPointerDown={(e) => {
           e.preventDefault();
-          if (!isRecording) start();
+          if (!isRecording) void start();
         }}
         onPointerUp={(e) => {
           e.preventDefault();
-          stop();
+          void stop();
         }}
         onPointerCancel={(e) => {
           e.preventDefault();
-          stop();
+          void stop();
         }}
         onPointerLeave={(e) => {
-          // optional: stop when leaving while pressed
-          if (isRecording) stop();
+          if (isRecording) void stop();
         }}
         style={{
           borderRadius: 16,
@@ -55,17 +75,11 @@ export function VoiceHoldButton() {
           touchAction: 'none',
         }}
       >
-        {isRecording ? `Recording… ${msToClock(durationMs)}` : 'Hold to Record'}
+        {isRecording ? `Aufnahme… ${msToClock(durationMs)}` : 'Gedrückt halten — sprechen'}
       </button>
 
       {error && (
-        <div
-          style={{
-            fontSize: 12,
-            opacity: 0.9,
-            color: 'rgba(255,180,180,0.95)',
-          }}
-        >
+        <div style={{ fontSize: 12, opacity: 0.9, color: 'rgba(255,180,180,0.95)' }}>
           {error}
         </div>
       )}

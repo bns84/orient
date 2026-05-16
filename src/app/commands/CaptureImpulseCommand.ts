@@ -21,6 +21,7 @@ import { v4 as uuidv4 } from 'uuid';
 export interface CaptureImpulseInput {
   text?: string;
   transcript?: string;
+  payloadRef?: string;
   threadId?: string;
 }
 
@@ -38,6 +39,7 @@ export class CaptureImpulseCommand {
         content: {
           text: input.text,
           transcript: input.transcript,
+          payloadRef: input.payloadRef,
         },
         createdAt: ctx.timestamp ?? new Date(),
       });

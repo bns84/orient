@@ -12,7 +12,7 @@ const urlsToCache = [
   '/src/app/main.ts',
   '/src/app/App.ts',
   '/src/app/styles.css',
-  '/manifest.json',
+  '/favicon.svg',
 ];
 
 // Install Event - Cache Resources

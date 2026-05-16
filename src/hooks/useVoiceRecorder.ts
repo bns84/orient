@@ -15,7 +15,11 @@ import { enforceVoiceRetention } from '../db/voiceRetention';
 
 type Status = 'idle' | 'arming' | 'recording' | 'saving' | 'error';
 
-export function useVoiceRecorder() {
+export type VoiceRecorderOptions = {
+  onTranscriptReady?: (voiceId: number, transcript: string) => void | Promise<void>;
+};
+
+export function useVoiceRecorder(options?: VoiceRecorderOptions) {
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState<string | null>(null);
   const [durationMs, setDurationMs] = useState<number>(0);
@@ -95,12 +99,15 @@ export function useVoiceRecorder() {
 
           // Fake async transcription (stub)
           setTimeout(async () => {
+            const transcript =
+              'Sprachnotiz (Stub-Transkript) — echte Transkription folgt in Phase 2.';
             await orientDb.voice.update(voiceId, {
               status: 'done',
               note: 'Transcription complete (stub)',
-              transcript: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Stub transcription)',
+              transcript,
             });
             await logEvent('voice.transcription.done', { id: voiceId });
+            await options?.onTranscriptReady?.(voiceId, transcript);
           }, 1200);
 
           await enforceVoiceRetention({ maxItems: 50, maxAgeDays: 14 });

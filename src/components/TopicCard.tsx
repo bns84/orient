@@ -11,6 +11,7 @@
 
 import React from 'react';
 import { bumpInterest } from '../db/interest';
+import { markTopicSeen } from '../db/topics';
 import { TopicShareButton } from './TopicShareButton';
 import { ShareTopic } from '../share/compose';
 
@@ -27,9 +28,11 @@ type Topic = {
 
 type Props = {
   topic: Topic;
+  selected?: boolean;
+  onSelect?: (key: string) => void;
 };
 
-export function TopicCard({ topic }: Props) {
+export function TopicCard({ topic, selected, onSelect }: Props) {
   const [bumped, setBumped] = React.useState(false);
 
   // Mark topic as seen when component mounts (if it's new)
@@ -59,7 +62,23 @@ export function TopicCard({ topic }: Props) {
   };
 
   return (
-    <div style={cardStyle}>
+    <div
+      role={onSelect ? 'button' : undefined}
+      tabIndex={onSelect ? 0 : undefined}
+      onClick={() => onSelect?.(topic.key)}
+      onKeyDown={(e) => {
+        if (onSelect && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          onSelect(topic.key);
+        }
+      }}
+      style={{
+        ...cardStyle,
+        cursor: onSelect ? 'pointer' : 'default',
+        outline: selected ? '1px solid rgba(120,160,255,0.5)' : undefined,
+        boxShadow: selected ? '0 0 0 1px rgba(120,160,255,0.25)' : undefined,
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

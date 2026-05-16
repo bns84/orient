@@ -9,7 +9,7 @@
  * - Austauschbarkeit (Memory → IndexedDB später)
  */
 
-import { MemoryLocalDatabase } from '../../infrastructure/storage/MemoryLocalDatabase';
+import type { LocalDatabase } from '../../infrastructure/storage/LocalDatabase';
 
 import { ThreadRepositoryLocal } from '../../infrastructure/storage/ThreadRepository.local';
 import { ImpulseRepositoryLocal } from '../../infrastructure/storage/ImpulseRepository.local';
@@ -20,9 +20,14 @@ import { ContextService } from '../../app/context/ContextService';
 
 import { ThreadQueryService } from '../../app/queries/ThreadQueryService';
 import { DailyQueryService } from '../../app/queries/DailyQueryService';
+import { CaptureImpulseCommand } from '../../app/commands/CaptureImpulseCommand';
+import { ArchiveThreadCommand } from '../../app/commands/ArchiveThreadCommand';
+import { ExportThreadCommand } from '../../app/commands/ExportThreadCommand';
+import { ExportOrchestrator } from '../../app/export/ExportOrchestrator';
+import { MarkdownExportService } from '../../app/export/MarkdownExportService';
+import { CursorPackExportService } from '../../app/export/CursorPackExportService';
 
-export const createAppServices = () => {
-  const db = new MemoryLocalDatabase();
+export const createAppServices = (db: LocalDatabase) => {
 
   const threadRepo = new ThreadRepositoryLocal(db);
   const impulseRepo = new ImpulseRepositoryLocal(db);
@@ -37,6 +42,15 @@ export const createAppServices = () => {
     edgeRepo: edgeRepo as any,
   });
   const dailyQuery = new DailyQueryService(threadRepo as any, threadQuery);
+  const captureImpulse = new CaptureImpulseCommand(impulseRepo as any);
+  const archiveThread = new ArchiveThreadCommand(threadRepo as any);
+  const exportOrchestrator = new ExportOrchestrator(
+    threadQuery,
+    dailyQuery,
+    new MarkdownExportService(),
+    new CursorPackExportService(),
+  );
+  const exportThread = new ExportThreadCommand(exportOrchestrator);
 
   return {
     db,
@@ -46,5 +60,8 @@ export const createAppServices = () => {
     contextService,
     threadQuery,
     dailyQuery,
+    captureImpulse,
+    archiveThread,
+    exportThread,
   };
 };

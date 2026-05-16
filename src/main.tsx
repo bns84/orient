@@ -1,15 +1,19 @@
 /**
- * ORIENT - React Entry Point
- * 
- * React-App-Startpunkt
+ * ORIENT - React Entry Point (PWA)
  */
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { registerSW } from 'virtual:pwa-register';
 import App from './App';
+import { AppServicesProvider } from './ui/wiring/AppServicesContext';
+
+registerSW({ immediate: true });
 
 ReactDOM.createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
-    <App />
+    <AppServicesProvider>
+      <App />
+    </AppServicesProvider>
   </React.StrictMode>,
 );

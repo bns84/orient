@@ -84,6 +84,15 @@ export type TopicRow = {
   isNew?: boolean;
 };
 
+/** Domain-Persistenz: Threads, Impulses, Edges, UserContext */
+export type CoreStoreRow = {
+  id: string;
+  store: string;
+  key: string;
+  value: unknown;
+  updatedAt: number;
+};
+
 class OrientDB extends Dexie {
   kv!: Table<KvRow, string>;
   events!: Table<EventRow, number>;
@@ -93,6 +102,7 @@ class OrientDB extends Dexie {
   relations!: Table<RelationRow, number>;
   interest!: Table<InterestRow, string>;
   topics!: Table<TopicRow, string>;
+  coreStore!: Table<CoreStoreRow, string>;
 
   constructor() {
     super('orient_db');
@@ -138,6 +148,18 @@ class OrientDB extends Dexie {
       relations: '++id, fromId, toId, type, createdAt',
       interest: 'key, weight, lastBumpAt',
       topics: 'key, updatedAt, origin, createdAt',
+    });
+
+    this.version(6).stores({
+      kv: 'key, updatedAt',
+      events: '++id, type, createdAt',
+      voice: '++id, createdAt',
+      attachments: '++id, kind, targetId, voiceId, createdAt',
+      nodes: '++id, kind, key, updatedAt',
+      relations: '++id, fromId, toId, type, createdAt',
+      interest: 'key, weight, lastBumpAt',
+      topics: 'key, updatedAt, origin, createdAt',
+      coreStore: 'id, store, key, updatedAt',
     });
   }
 }

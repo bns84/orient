@@ -11,14 +11,36 @@
 
 import React from 'react';
 import { createTopicFromPrompt } from '../db/topics';
+import { useAppServices } from '../ui/wiring/AppServicesContext';
+import { ThreadStatus } from '../core/threads/ThreadStatus';
 
-export function NewTopicQuick() {
+type Props = {
+  onCreated?: () => void;
+};
+
+export function NewTopicQuick({ onCreated }: Props) {
+  const { threadRepo } = useAppServices();
   const [v, setV] = React.useState('');
 
   const onCreate = async () => {
     if (!v.trim()) return;
-    await createTopicFromPrompt(v.trim(), 'manual');
+    const row = await createTopicFromPrompt(v.trim(), 'manual');
+    const now = new Date();
+    await threadRepo.save({
+      id: row.key,
+      title: row.title,
+      status: ThreadStatus.ACTIVE,
+      createdAt: now,
+      updatedAt: now,
+      metrics: {
+        recencyScore: 0.5,
+        frequencyScore: 0.2,
+        confidenceScore: 0.3,
+        userRelevanceScore: 0.6,
+      },
+    });
     setV('');
+    onCreated?.();
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

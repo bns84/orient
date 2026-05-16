@@ -10,11 +10,17 @@
  * - Companion-Gefühl (nicht Dev-Tool)
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { getPresentationHints } from '../behavior/engine';
+import { getCompanionName } from '../profile/onboardingProfile';
 
 export function PresenceHeader() {
   const hints = getPresentationHints();
+  const [name, setName] = useState<string | undefined>();
+
+  useEffect(() => {
+    void getCompanionName().then(setName);
+  }, []);
 
   const line =
     hints?.tone === 'crisp'
@@ -37,7 +43,7 @@ export function PresenceHeader() {
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <div style={{ fontSize: 14, fontWeight: 600, opacity: 0.92 }}>ORIENT</div>
+        <div style={{ fontSize: 14, fontWeight: 600, opacity: 0.92 }}>{name ?? 'ORIENT'}</div>
         <div style={{ fontSize: 13, opacity: 0.7 }}>{line}</div>
       </div>
 

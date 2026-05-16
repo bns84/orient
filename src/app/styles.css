@@ -1,9 +1,11 @@
 /**
  * ORIENT - Styles
- * 
+ *
  * Minimal, ruhig, DNA-konform.
- * Keine UI-Frameworks, keine Ablenkung.
+ * Design-Tokens: design-tokens.css (ORIENT_DesignSystem.md)
  */
+
+@import './design-tokens.css';
 
 * {
   margin: 0;
@@ -12,9 +14,9 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: #000000;
-  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   overflow-y: auto;
   overflow-x: hidden;
   width: 100vw;

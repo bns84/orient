@@ -28,9 +28,11 @@ type Topic = {
 
 type Props = {
   topics?: Topic[]; // systemTopics (optional)
+  selectedKey?: string | null;
+  onSelectTopic?: (key: string) => void;
 };
 
-export function TopicList({ topics: systemTopics = [] }: Props) {
+export function TopicList({ topics: systemTopics = [], selectedKey, onSelectTopic }: Props) {
   const dbTopics = useTopics(); // from DB
   const hints = getPresentationHints();
 
@@ -73,7 +75,12 @@ export function TopicList({ topics: systemTopics = [] }: Props) {
         <div style={{ fontSize: 12, opacity: 0.6 }}>Keine Themen verfügbar.</div>
       )}
       {shown.map((topic) => (
-        <TopicCard key={topic.key} topic={topic} />
+        <TopicCard
+          key={topic.key}
+          topic={topic}
+          selected={topic.key === selectedKey}
+          onSelect={onSelectTopic}
+        />
       ))}
     </div>
   );

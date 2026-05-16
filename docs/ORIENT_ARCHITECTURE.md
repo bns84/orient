@@ -1,5 +1,7 @@
 # ORIENT — Technische Architektur
 
+> **Gesamtkonzept:** [`ORIENT_KONZEPT.md`](./ORIENT_KONZEPT.md) (Kap. 6–7) · Dieses Dokument ist **bindend für Phase 1**.
+
 Dieses Dokument beschreibt die modulare Architektur von ORIENT (local-first).
 
 Alle Architektur-Entscheidungen sind der ORIENT_DNA untergeordnet:
