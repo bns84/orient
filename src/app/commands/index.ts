@@ -11,5 +11,6 @@ export type { CaptureImpulseInput } from './CaptureImpulseCommand';
 export { SetContextModeCommand } from './SetContextModeCommand';
 export { PinThreadCommand } from './PinThreadCommand';
 export { ArchiveThreadCommand } from './ArchiveThreadCommand';
+export { ObserveThreadCommand } from './ObserveThreadCommand';
 export { ExportThreadCommand } from './ExportThreadCommand';
 export type { ExportThreadResult } from './ExportThreadCommand';

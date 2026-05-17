@@ -6,14 +6,26 @@ import React, { useState } from 'react';
 import { useAppServices } from '../ui/wiring/AppServicesContext';
 import { logEvent } from '../db/events';
 import { useAppStore } from '../store/useAppStore';
+import { tryExecuteVoiceCommand } from '../services/commands';
+import type { AutoTopicResult } from '../services/auto-topic-engine';
 
 type Props = {
   threadId?: string | null;
   onCaptured?: () => void;
+  reconcileTopics?: () => Promise<AutoTopicResult>;
 };
 
-export function TextImpulseInput({ threadId, onCaptured }: Props) {
-  const { captureImpulse, contextService } = useAppServices();
+export function TextImpulseInput({ threadId, onCaptured, reconcileTopics }: Props) {
+  const {
+    captureImpulse,
+    contextService,
+    threadRepo,
+    impulseRepo,
+    archiveThread,
+    observeThread,
+    exportThread,
+    exportOrchestrator,
+  } = useAppServices();
   const [text, setText] = useState('');
   const [status, setStatus] = useState<'idle' | 'saving' | 'ok' | 'error'>('idle');
   const [message, setMessage] = useState<string | null>(null);
@@ -27,6 +39,43 @@ export function TextImpulseInput({ threadId, onCaptured }: Props) {
     useAppStore.getState().setPresence('think');
 
     const ctx = await contextService.getCurrent();
+    const queryOpts = {
+      contextMode: ctx.mode,
+      allowHints: true,
+      hintBudgetRemaining: ctx.hintBudgetPerDay ?? 3,
+    };
+
+    const cmd = await tryExecuteVoiceCommand(
+      {
+        threadId,
+        queryOpts,
+        threadRepo,
+        impulseRepo,
+        archiveThread,
+        observeThread,
+        exportThread,
+        exportOrchestrator,
+        reconcileTopics,
+      },
+      trimmed,
+    );
+
+    if (cmd.handled) {
+      await logEvent('text.command', { ok: cmd.ok });
+      setText('');
+      setStatus(cmd.ok ? 'ok' : 'error');
+      setMessage(cmd.message ?? (cmd.ok ? 'Erledigt.' : 'Nicht möglich.'));
+      if (cmd.ok) {
+        onCaptured?.();
+        useAppStore.getState().pulsePresence('ready', 1600);
+      }
+      window.setTimeout(() => {
+        setStatus('idle');
+        setMessage(null);
+      }, 2500);
+      return;
+    }
+
     const res = await captureImpulse.execute(
       { text: trimmed, threadId: threadId ?? undefined },
       { contextMode: ctx.mode, timestamp: new Date() },
@@ -59,7 +108,7 @@ export function TextImpulseInput({ threadId, onCaptured }: Props) {
           onKeyDown={(e) => {
             if (e.key === 'Enter') void submit();
           }}
-          placeholder="Kurz notieren…"
+          placeholder="Gedanke — oder „Fass zusammen“ / „Exportier“"
           disabled={status === 'saving'}
           style={{
             flex: 1,

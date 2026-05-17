@@ -287,21 +287,24 @@ Phase 1 ist „ORIENT klein, aber vollständig“ (Versionsplan 1.0), technisch 
 
 ### 7.1 Muss (Priorität A–D)
 
-| # | Lieferung | Herkunft |
-|---|-----------|----------|
-| A1 | Datenmodell Impulse/Thread/Entity/Edge + SQLite | TODO, DATA_MODEL |
-| A2 | Lokale Verschlüsselung sensibler Felder | TODO, ARCHITECTURE |
-| A3 | Thread-Lifecycle-Engine | TODO, SYSTEMLOGIC |
-| A4 | Graph-Engine (minimal) | TODO |
-| B5 | Input Text + Voice → Impulse | TODO, USER_FLOWS |
-| B6 | Context Snapshots (Ruhe/Familie/Fokus) | TODO, DNA |
-| B7 | Eskalation 0–3, Stufe 4 gesperrt | TODO, DELTA07 |
-| C8 | Minimaler Visual-Denkraum + Präsenz-Zustände | TODO, DELTA07, DesignSystem |
-| C9 | HUD rudimentär (Thread-Status, Unsicherheit) | TODO |
-| D10 | Export Markdown (Overview, Writing, README) | TODO, EXPORT_FORMATS |
-| D11 | Kommandos: zusammenfassen, ablegen, ignorieren, exportieren | TODO |
-| + | Onboarding (4 Wege) + erster Satz | Onboarding, ErsterSatz |
-| + | Behavior: Rhythmus, Stimmung → Präsenz (kein Nerven) | Cursor_v1 → mapped to B6/B7 |
+| # | Lieferung | Status (2026-05) |
+|---|-----------|------------------|
+| A1 | Datenmodell Impulse/Thread/Entity/Edge + SQLite | ✅ |
+| A2 | Lokale Verschlüsselung sensibler Felder | ✅ |
+| A3 | Thread-Lifecycle-Engine | ✅ |
+| A4 | Graph-Engine (minimal) | ✅ |
+| B5 | Input Text + Voice → Impulse | ✅ |
+| B6 | Context Snapshots (Ruhe/Normal/Fokus) | 🟡 |
+| B7 | Eskalation 0–3, Stufe 4 gesperrt | ✅ |
+| C8 | Präsenz-Bubble + Visual (R3F; Debug-2D) | 🟡 |
+| C9 | HUD rudimentär (Thread-Status, Unsicherheit) | 🟡 |
+| D10 | Export Markdown (Overview, Writing, README) | ✅ |
+| D11 | Kommandos: zusammenfassen, ablegen, ignorieren, exportieren | 🟡 |
+| + | Onboarding (4 Wege) + erster Satz | ✅ |
+| + | Gedanken-Verarbeitung (Thread-Match, Edge) | 🟡 |
+| + | Behavior: Rhythmus, Stimmung → Präsenz | 🟡 |
+
+Details: `ORIENT_STATUS_PHASE1.md`, `ORIENT_TODO_PHASE1.md`
 
 ### 7.2 Soll (wenn A–D stabil)
 

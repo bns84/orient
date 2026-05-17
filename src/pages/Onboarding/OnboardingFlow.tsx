@@ -1,24 +1,13 @@
 /**
- * Erster Start — ORIENT_ErsterSatz.md
+ * Erster Start — Name + Kommunikationsstil (keine manuellen Themen).
  */
 
 import React, { useEffect, useState } from 'react';
-import { useAppServices } from '../../ui/wiring/AppServicesContext';
-import { VoiceHoldButton } from '../../components/VoiceHoldButton';
-import { INTEREST_TAGS, NAME_SUGGESTIONS } from './interestTags';
-import { captureFirstThought, finishOnboarding } from './onboardingActions';
+import { NAME_SUGGESTIONS } from './interestTags';
+import { finishOnboarding } from './onboardingActions';
 import type { CommunicationStyle, OnboardingPath } from '../../profile/onboardingProfile';
 
-type Step =
-  | 'pause'
-  | 'greeting'
-  | 'choices'
-  | 'skip_done'
-  | 'name'
-  | 'interests'
-  | 'short_done'
-  | 'style'
-  | 'thought';
+type Step = 'pause' | 'greeting' | 'choices' | 'skip_done' | 'name' | 'style' | 'done';
 
 type Props = {
   onComplete: () => void;
@@ -49,14 +38,10 @@ const orb: React.CSSProperties = {
 };
 
 export function OnboardingFlow({ onComplete }: Props) {
-  const services = useAppServices();
   const [step, setStep] = useState<Step>('pause');
   const [path, setPath] = useState<OnboardingPath>('skip');
   const [companionName, setCompanionName] = useState('');
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [communicationStyle, setCommunicationStyle] = useState<CommunicationStyle | null>(null);
-  const [firstThought, setFirstThought] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const t = window.setTimeout(() => setStep('greeting'), 2000);
@@ -69,21 +54,19 @@ export function OnboardingFlow({ onComplete }: Props) {
     return () => window.clearTimeout(t);
   }, [step]);
 
-  const complete = async (p: OnboardingPath, interests: string[], name?: string, style?: CommunicationStyle) => {
-    await finishOnboarding(services, {
+  const complete = async (
+    p: OnboardingPath,
+    name?: string,
+    style?: CommunicationStyle,
+  ) => {
+    await finishOnboarding({
       complete: true,
       path: p,
       companionName: name?.trim() || undefined,
       communicationStyle: style,
-      interests,
+      interests: [],
     });
     onComplete();
-  };
-
-  const toggleInterest = (tag: string) => {
-    setSelectedInterests((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
-    );
   };
 
   const renderLines = (lines: string[]) => (
@@ -128,8 +111,8 @@ export function OnboardingFlow({ onComplete }: Props) {
         <>
           {renderLines([
             'Du kannst einfach loslegen.',
-            'Oder du nimmst dir eine Minute — dann kann ich dir schon früher helfen.',
-            'Oder wir reden kurz — dann sparen wir uns Wochen.',
+            'Oder du nimmst dir eine Minute — Name und wie ich mit dir sprechen soll.',
+            'Themen und Interessen lege ich nicht fest — die erkenne ich aus dem, was du sagst.',
           ])}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 24, width: '100%', maxWidth: 320 }}>
             <OnboardingButton
@@ -140,17 +123,10 @@ export function OnboardingFlow({ onComplete }: Props) {
               }}
             />
             <OnboardingButton
-              label="Kurz einrichten — 1 Min"
-              onClick={() => {
-                setPath('short');
-                setStep('name');
-              }}
-            />
-            <OnboardingButton
-              label="Jetzt kennenlernen"
+              label="Kurz einrichten"
               primary
               onClick={() => {
-                setPath('deep');
+                setPath('short');
                 setStep('name');
               }}
             />
@@ -161,7 +137,7 @@ export function OnboardingFlow({ onComplete }: Props) {
       {step === 'skip_done' && (
         <>
           <p style={{ fontSize: 16, margin: '0 0 20px' }}>Gut. Ich lerne dich über die Zeit kennen.</p>
-          <OnboardingButton label="Weiter" primary onClick={() => void complete('skip', [])} />
+          <OnboardingButton label="Weiter" primary onClick={() => void complete('skip')} />
         </>
       )}
 
@@ -186,49 +162,7 @@ export function OnboardingFlow({ onComplete }: Props) {
             label="Weiter"
             primary
             disabled={!companionName.trim()}
-            onClick={() => setStep('interests')}
-          />
-        </>
-      )}
-
-      {step === 'interests' && (
-        <>
-          <p style={{ fontSize: 16, margin: '0 0 8px' }}>
-            {companionName.trim() ? `${companionName.trim()}. Schön.` : 'Schön.'} Was interessiert dich?
-          </p>
-          <p style={{ fontSize: 12, opacity: 0.55, margin: '0 0 16px' }}>Mindestens eines. Darf sich ändern.</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', maxWidth: 400 }}>
-            {INTEREST_TAGS.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => toggleInterest(tag)}
-                style={tagBtn(selectedInterests.includes(tag))}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-          <div style={{ marginTop: 24 }}>
-            <OnboardingButton
-              label="Weiter"
-              primary
-              disabled={selectedInterests.length === 0}
-              onClick={() => setStep(path === 'deep' ? 'style' : 'short_done')}
-            />
-          </div>
-        </>
-      )}
-
-      {step === 'short_done' && (
-        <>
-          <p style={{ fontSize: 16, margin: '0 0 20px', textAlign: 'center', maxWidth: 360 }}>
-            Gut. Das reicht für den Anfang. Alles andere lerne ich über die Zeit.
-          </p>
-          <OnboardingButton
-            label="Loslegen"
-            primary
-            onClick={() => void complete('short', selectedInterests, companionName)}
+            onClick={() => setStep('style')}
           />
         </>
       )}
@@ -242,54 +176,37 @@ export function OnboardingFlow({ onComplete }: Props) {
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 320 }}>
             <OnboardingButton
-              label="Ich erzähle viel"
+              label="Ich erzähle viel (aktiv)"
               onClick={() => {
                 setCommunicationStyle('active');
-                setStep('thought');
+                setStep('done');
               }}
             />
             <OnboardingButton
-              label="Ich höre lieber zu"
+              label="Ich höre lieber zu (passiv)"
               onClick={() => {
                 setCommunicationStyle('passive');
-                setStep('thought');
+                setStep('done');
               }}
             />
           </div>
         </>
       )}
 
-      {step === 'thought' && (
+      {step === 'done' && (
         <>
-          <p style={{ fontSize: 15, margin: '0 0 12px', textAlign: 'center', maxWidth: 380 }}>
-            Was beschäftigt dich gerade am meisten? Beruf, Ideen, Menschen, die Welt — einfach was dir in den Sinn
-            kommt.
+          <p style={{ fontSize: 16, margin: '0 0 20px', textAlign: 'center', maxWidth: 360 }}>
+            Gut. Alles andere — Themen, Schwerpunkte, Rhythmus — lerne ich aus dem, was kommt.
           </p>
-          <textarea
-            value={firstThought}
-            onChange={(e) => setFirstThought(e.target.value)}
-            placeholder="Oder kurz tippen…"
-            rows={3}
-            style={{ ...inputStyle, width: '100%', maxWidth: 360, resize: 'vertical' }}
-          />
-          <div style={{ margin: '16px 0', width: '100%', maxWidth: 360 }}>
-            <VoiceHoldButton />
-          </div>
           <OnboardingButton
-            label="Weiter"
+            label="Loslegen"
             primary
-            onClick={async () => {
-              const interests = selectedInterests.length ? selectedInterests : ['Persönliches'];
-              if (firstThought.trim()) {
-                await captureFirstThought(services, firstThought.trim());
-              }
-              await complete('deep', interests, companionName, communicationStyle ?? undefined);
-            }}
+            onClick={() =>
+              void complete(path === 'skip' ? 'short' : path, companionName, communicationStyle ?? undefined)
+            }
           />
         </>
       )}
-
-      {message && <p style={{ fontSize: 12, opacity: 0.7, marginTop: 16 }}>{message}</p>}
     </div>
   );
 }

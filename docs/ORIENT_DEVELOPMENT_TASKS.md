@@ -4,6 +4,22 @@ Diese Tasks leiten sich direkt aus ORIENT_TODO_PHASE1.md ab und sind in umsetzba
 
 **Ziel**: Ein funktionierender, ruhiger ORIENT-Core ohne Feature-Explosion.
 
+**Stand:** 2026-05-17
+
+| Task | Kurz | Status |
+|------|------|--------|
+| A1 | Datenmodell + SQLite | ✅ |
+| A2 | Verschlüsselung | ✅ |
+| A3 | Thread-Lifecycle | ✅ |
+| A4 | Graph-Engine | ✅ |
+| B5 | Text + Voice Input | ✅ |
+| B6 | Kontext-Snapshots | 🟡 |
+| B7 | Eskalation 0–3 | ✅ |
+| C8 | Visual / Präsenz | 🟡 (R3F-Bubble ✅, Haupt-Visual Debug) |
+| C9 | HUD | 🟡 |
+| D10 | Export | ✅ |
+| D11 | Nutzer-Kommandos | 🟡 |
+
 ---
 
 ## PRIORITÄT A — Core & Fundament
@@ -371,7 +387,7 @@ Phase 1 ist abgeschlossen, wenn:
 ✅ **Plattform**: PWA (Web), offline-first. Später optional Desktop-Wrap (Tauri).  
 ✅ **Sprache**: TypeScript end-to-end.  
 ✅ **Voice-Input**: Ja in Phase 1, aber minimal (Push-to-talk + Transkript als Impulse). Kein TTS in Phase 1.  
-✅ **Visual**: Phase 1 ohne echte 3D-Engine (Canvas/WebGL-light für Staub/Leuchten/Fokus). Three.js/R3F erst Phase 2.  
+🟡 **Visual**: Spec war Canvas-only; Repo hat **OrientBubble (R3F)** im Header + 2D-Debug-Canvas. Volles Zentral-Layout (Schritt 11) noch offen.  
 ✅ **Testing**: Vitest für Core-Logik + Storage; Playwright optional später.
 
 ## Repo-Struktur

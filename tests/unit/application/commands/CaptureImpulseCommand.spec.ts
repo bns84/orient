@@ -5,7 +5,11 @@
  * Respektiert ORIENT_DNA: Keine Bewertung, nur festhalten.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('../../../../src/db/interest', () => ({
+  recordTopicEngagement: vi.fn(async () => 0),
+}));
 import { CaptureImpulseCommand } from '@app/commands/CaptureImpulseCommand';
 import { ContextMode } from '@core/escalation/ContextMode';
 import { ImpulseState } from '@core/impulses/ImpulseState';

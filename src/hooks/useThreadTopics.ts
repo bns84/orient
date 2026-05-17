@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAppServices } from '../ui/wiring/AppServicesContext';
 import { ThreadStatus } from '../core/threads/ThreadStatus';
+import { threadStatusLabel } from '../utils/threadStatusLabel';
 
 export type ThreadTopicCard = {
   key: string;
@@ -40,7 +41,7 @@ export function useThreadTopics() {
         cards.push({
           key: thread.id,
           title: thread.title,
-          subtitle: thread.status,
+          subtitle: threadStatusLabel(thread.status),
           summary: snapshot?.summary,
           bullets: snapshot?.highlights,
           isNew:
@@ -49,7 +50,11 @@ export function useThreadTopics() {
         });
       }
 
-      cards.sort((a, b) => a.title.localeCompare(b.title, 'de'));
+      cards.sort((a, b) => {
+        const ta = threads.find((t) => t.id === a.key)?.updatedAt?.getTime() ?? 0;
+        const tb = threads.find((t) => t.id === b.key)?.updatedAt?.getTime() ?? 0;
+        return tb - ta;
+      });
       setTopics(cards);
     } finally {
       setLoading(false);

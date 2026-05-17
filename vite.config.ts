@@ -71,5 +71,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    /** Nach neuen R3F-Paketen: Cache leeren + `npm run dev:clean`, dann Hard-Reload. */
+    hmr: { overlay: true },
   },
 });

@@ -24,6 +24,9 @@ type Props = {
   topics?: Topic[];
   selectedKey?: string | null;
   onSelectTopic?: (key: string) => void;
+  /** Erhöhen, wenn Interesse-Gewichte sich geändert haben (Neusortierung). */
+  interestRankKey?: number;
+  listTitle?: string;
 };
 
 function dedupeByKey(topics: Topic[]): Topic[] {
@@ -36,7 +39,13 @@ function dedupeByKey(topics: Topic[]): Topic[] {
   return [...byKey.values()];
 }
 
-export function TopicList({ topics = [], selectedKey, onSelectTopic }: Props) {
+export function TopicList({
+  topics = [],
+  selectedKey,
+  onSelectTopic,
+  interestRankKey = 0,
+  listTitle = 'Themen',
+}: Props) {
   const hints = getPresentationHints();
   const allTopics = React.useMemo(() => dedupeByKey(topics), [topics]);
 
@@ -52,14 +61,14 @@ export function TopicList({ topics = [], selectedKey, onSelectTopic }: Props) {
     return () => {
       alive = false;
     };
-  }, [allTopics]);
+  }, [allTopics, interestRankKey]);
 
   const topicCount = hints?.topicCount ?? 4;
   const shown = ranked.slice(0, topicCount);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div style={{ fontSize: 13, opacity: 0.85 }}>Themen</div>
+      <div style={{ fontSize: 13, opacity: 0.85 }}>{listTitle}</div>
       {shown.length === 0 && (
         <div style={{ fontSize: 12, opacity: 0.6 }}>Keine Themen verfügbar.</div>
       )}

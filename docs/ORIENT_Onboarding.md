@@ -16,7 +16,7 @@ Nicht weil es muss — sondern weil Vertrauen durch Transparenz entsteht.
 
 ---
 
-## Die drei Wege rein
+## Die Wege rein (Version 1.0)
 
 ### Weg 1 — Überspringen
 
@@ -36,56 +36,27 @@ Wann das passt: unterwegs, auf dem Sprung, keine Zeit, kein Vertrauen noch.
 
 ---
 
-### Weg 2 — Schnell-Setup (30 Sekunden bis 1 Minute)
+### Weg 2 — Kurz einrichten (ca. 1 Minute)
 
-*"Wenn du dir eine Minute nimmst, kann ich schon mal erste Umrisse zeichnen."*
+*"Wenn du dir eine Minute nimmst, weiß ich wie ich mit dir sprechen soll."*
 
-Drei bis fünf Interessensinseln benennen.
-Fertig. ORIENT hat genug um anzufangen.
+Zwei Schritte — sonst nichts:
+— **Wie soll ich heißen?** (Companion-Name)
+— **Kommunikationsstil:** aktiv (du erzählst viel) oder passiv (du hörst lieber zu)
 
 **Was ORIENT dazu sagt:**
-*"Wenn du dir kurz 30 Sekunden nimmst,
-kann ich dir schon viel früher wirklich helfen.
-Ich frage dich nach ein paar Dingen die dich interessieren —
-das war's. Alles andere lerne ich über die Zeit."*
+*"Ich lege keine Themen und keine Interessen fest.
+Das erkenne ich aus dem, was du mir erzählst —
+im Sammelcontainer, roh und ohne Kategorien.
+Wenn ein Muster klar wird, lege ich ein Thema an — ohne dass du entscheiden musst."*
 
-Interessensinseln können sein:
-— Design, Technik, Rezepte
-— Meine Schwester und ihr Kind
-— Startups, Nachhaltigkeit, Sport
-— Oder nur: Arbeit und Familie
-
-Alles ist richtig. Auch nur drei Dinge.
-Alles darf sich ändern — jederzeit.
+**Entfernt in Version 1.0:** Interessens-Inseln, Themen-Tags, manuelle Kategorien.
 
 Wann das passt: in der Bahn, zwischen zwei Terminen, kurz mal eben.
 
 ---
 
-### Weg 3 — Tiefes Onboarding
-
-*"Wenn du dir jetzt Zeit nimmst, sparen wir uns mehrere Wochen."*
-
-Ausführlich, persönlich, detailliert.
-Für die die viel geben wollen und schnell zusammenarbeiten möchten.
-
-**Was ORIENT dazu sagt:**
-*"Je mehr du mir jetzt sagst, desto schneller können wir wirklich zusammenarbeiten.
-Was in Wochen des Beobachtens entsteht,
-können wir in einem guten Gespräch in Minuten erreichen.
-Du entscheidest wie tief wir gehen."*
-
-ORIENT stellt kluge Fragen — nicht viele:
-— Wie bist du so? Gibst du viel von dir — oder brauchst du erst Vertrauen?
-— Was beschäftigt dich gerade am meisten?
-— Soll ich aktiv fragen — oder lieber warten bis du kommst?
-— Wie soll ich heißen?
-
-Wann das passt: wenn man wirklich loslegen will, zuhause, Zeit und Lust da.
-
----
-
-### Weg 4 — Der natürlichste Weg
+### Weg 3 — Der natürlichste Weg
 
 Kein Setup. Einfach sprechen.
 

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:force": "vite --force",
+    "dev:clean": "vite --force",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",

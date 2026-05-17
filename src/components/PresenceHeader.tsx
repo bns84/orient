@@ -47,7 +47,7 @@ export function PresenceHeader() {
         </div>
         <div style={{ fontSize: 13, opacity: 0.7 }}>{line}</div>
         <div style={{ fontSize: 11, opacity: 0.45 }}>
-          {moodLabel[currentMood] ?? currentMood} · {presence}
+          {moodLabel[currentMood] ?? currentMood}
         </div>
       </div>
 

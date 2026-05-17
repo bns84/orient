@@ -45,4 +45,9 @@ export class ExportOrchestrator {
     const view = await this.dailyQuery.getDailyView(opts);
     return this.cursor.dailyViewToCursorPack(view);
   }
+
+  async exportDailyMarkdown(opts: ThreadQueryOptions): Promise<ExportBundle> {
+    const view = await this.dailyQuery.getDailyView(opts);
+    return this.md.dailyViewToMarkdown(view);
+  }
 }

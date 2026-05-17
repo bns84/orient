@@ -1,331 +1,247 @@
 # ORIENT — Phase 1 Status & Prioritäten
 
-**Stand:** Nach Delta 07 (Behavior & Presence Specification)
+
+
+**Stand:** 2026-05-17 (für neuen Chat)  
+
+**Branch:** `cursor/phase1-sqlite-onboarding-pwa`  
+
+**Geschätzter Fortschritt:** ~85 %
+
+
 
 ---
 
-## ✅ Was ist bereits implementiert?
 
-### PRIORITÄT A — Core & Fundament
 
-#### 1. Lokales Datenmodell ✅
-- ✅ **Domain Objects** vollständig:
-  - `Thread` mit Status-Logik (ACTIVE, OBSERVED, DORMANT, CLOSED)
-  - `Impulse` (moment-basiert, keine `updatedAt`)
-  - `Entity` (verschiedene Types)
-  - `Edge` (Graph-Verknüpfungen)
-- ✅ **Status-Logik**: Thread-Lifecycle implementiert
-- ✅ **Keine automatische Löschung**: DNA-konform
+## Kurzüberblick
 
-#### 2. Lokale Verschlüsselung ⚠️
-- ⚠️ **Noch nicht implementiert** (geplant für später)
-- ✅ Local-first Architektur vorbereitet
 
-#### 3. Thread-Lifecycle-Engine ✅
-- ✅ `ThreadLifecycle` implementiert:
-  - `activate()`
-  - `markDormant()`
-  - `reactivate()`
-  - `close()`
-- ✅ Immutability gewährleistet
 
-#### 4. Graph-Engine (minimal) ✅
-- ✅ **Core Graph** (`src/core/graph/`):
-  - `NodeRef`, `RelationType`, `EdgeWeights`
-  - `Edge` mit deterministischen IDs
-  - `GraphLinker` (idempotent)
-- ✅ **DB Graph** (`src/db/graph.ts`):
-  - `nodes` und `relations` Tabellen
-  - `ensureNode()`, `ensureRelation()`
-  - `linkVoiceToPanel()` (Bridge)
-  - `getNeighbors()` (Debug)
-- ✅ **Graph Inspector** (Debug-UI)
+| Bereich | Status |
+
+|---------|--------|
+
+| SQLite Domain (`sql.js` + Repositories) | ✅ |
+
+| Verschlüsselung Impulse | ✅ |
+
+| PWA + Onboarding (Name + Stil) | ✅ |
+
+| Sammelcontainer + Auto-Topic-Engine | ✅ |
+
+| Präsenz-Bubble (R3F) + `useAppStore` | ✅ |
+
+| Text + Voice → Impulse | ✅ |
+
+| Morgenroutine-UI | ✅ |
+
+| 3-Schichten-UI (final Layout/Swipes) | 🟡 |
+
+| Abendritual UI | ⬜ |
+
+| KI optional | ⬜ Stub |
+
+
 
 ---
 
-### PRIORITÄT B — Interaktion & Beziehung
 
-#### 5. Input-Layer ⚠️ Teilweise
-- ✅ **Voice-Input**:
-  - `useVoiceRecorder` Hook
-  - `VoiceHoldButton` Component
-  - Voice-Recordings in IndexedDB
-  - Transcription Stub (Phase 2)
-- ⚠️ **Text-Input**: Noch nicht implementiert
-- ✅ **Impulse-Speicherung**: Voice wird als Impulse gespeichert
 
-#### 6. Kontext-Snapshot-System ⚠️ Teilweise
-- ✅ **Context-Modes**: `ContextMode` Enum (QUIET, FOCUS, SOCIAL, FAMILY, NORMAL)
-- ✅ **UserContext**: `UserContext` + `UserContextRepository`
-- ✅ **ContextService**: `getCurrent()`, `setMode()`
-- ⚠️ **UI für Context-Setting**: Noch nicht implementiert
-- ✅ **Context Snapshot Persistenz**: KV-Store
+## Handoff — letzte größere Änderungen
 
-#### 7. Eskalationslogik (0–3) ✅
-- ✅ **Escalation Engine** vollständig:
-  - `EscalationLevel` (0-3, Level 4 gesperrt)
-  - `EscalationPolicy` (DNA-konform)
-  - `EscalationEngine.evaluate()`
-  - Context-Aware (ContextMode beeinflusst Output)
-- ✅ **Signal-Modell**: `Signal` Interface
+
+
+1. **Themen-System:** Sammelcontainer statt manueller Themen; `runAutoTopicEngine` legt Themen **vollautomatisch** an und sortiert nachträglich zu (kein Ja/Nein-Dialog).
+
+2. **Onboarding:** nur Companion-Name + Kommunikationsstil; keine Interessen-Inseln.
+
+3. **Share:** aus v1.0 entfernt (v3.0 per Sprache).
+
+4. **Navigation:** Themen-Detail inline unter der Liste; `Focusable`-Overlay aus Haupt-UI.
+
+5. **Morgenroutine:** `MorningBriefing` ab 6:00, einmal pro Tag nach Pause.
+
+
+
+**Wichtige Dateien:** `App.tsx`, `auto-topic-engine.ts`, `thought-processor.ts`, `morning-briefing.ts`, `CollectionInbox.tsx`, `OnboardingFlow.tsx`
+
+
 
 ---
 
-### PRIORITÄT C — Wahrnehmung & Feedback
 
-#### 8. Minimaler Visual-Denkraum ⚠️ Teilweise
-- ✅ **Visual-Kernel** (`src/visual/kernel/`):
-  - `VisualNode`, `VisualEdge`, `VisualCluster`
-  - `VisualState` (komplettes Modell)
-  - `VisualMappingPolicy` (deterministisch)
-  - `VisualKernel` (ThreadSnapshots → VisualState)
-- ✅ **Visual-Pipeline**:
-  - `VisualStatePipeline` (DailyView → VisualState)
-  - Cluster-Builder
-  - Focus-Model
-- ✅ **Visual-Debug-Canvas**: Canvas 2D für Debug
-- ⚠️ **Echte Visualisierung**: Noch rudimentär (Debug-only)
 
-#### 9. Themen-Fokus & HUD ⚠️ Teilweise
-- ✅ **Focusable Component**: Tap-to-focus, Double-tap lock
-- ✅ **ThreadSnapshot**: Strukturierte Thread-Ansicht
-- ✅ **DailyView**: Tägliche Übersicht (1-3 Threads)
-- ⚠️ **HUD-UI**: Noch nicht vollständig implementiert
+## ✅ Erledigt
 
----
 
-### PRIORITÄT D — Produktivität & Nutzen
 
-#### 10. Snapshot-Export (Markdown/Text) ✅
-- ✅ **Export-Services**:
-  - `MarkdownExportService` (Thread → Markdown)
-  - `CursorPackExportService` (DailyView → Cursor Pack)
-  - `ExportOrchestrator` (zentrale Orchestrierung)
-- ✅ **Export-Command**: `ExportThreadCommand`
+### Core & Speicher
 
-#### 11. Explizite Nutzer-Kommandos ✅
-- ✅ **Commands** implementiert:
-  - `CaptureImpulseCommand`
-  - `SetContextModeCommand`
-  - `PinThreadCommand` (Stub)
-  - `ArchiveThreadCommand`
-  - `ExportThreadCommand`
-- ⚠️ **UI für Commands**: Noch nicht vollständig
+- Domain: Thread, Impulse, Entity, Edge, ThreadLifecycle, EscalationEngine
 
----
+- SQLite primär + Dexie (Voice, Events, KV)
 
-### Zusätzliche Features (Delta 01-06)
+- Verschlüsselung Impulse (AES-GCM)
 
-#### Delta 01-03: UI Foundation ✅
-- ✅ **IndexedDB Setup**: Dexie mit `kv`, `events`, `voice` Tabellen
-- ✅ **Event-Logging**: `logEvent()` für Transparenz
-- ✅ **Voice-Recording**: Vollständig mit Retention-Policy
-- ✅ **Focusable Panels**: Tap-to-focus, Double-tap lock
-- ✅ **DB Export/Import**: Debug-Tool
+- Vitest: SQLite, Encryption, thought-processor, auto-topic-engine, morning-briefing
 
-#### Delta 04: Overview Panel ✅
-- ✅ **Overview Selector**: Counts + Timestamps
-- ✅ **OverviewPanel UI**: Status-Übersicht
-- ✅ **Quick Actions**: Export, Clear events, Clear focus
 
-#### Delta 05: Voice → Context Attachment ✅
-- ✅ **Attachments Table**: Voice an Panels anhängen
-- ✅ **Attachment API**: `attachVoiceToTarget()`, `getVoiceAttachmentsForTarget()`
-- ✅ **UI**: Attach-Button + Attachment-Liste mit Playback
 
-#### Delta 06: Context Graph ✅
-- ✅ **Graph Tables**: `nodes`, `relations`
-- ✅ **Graph API**: `ensureNode()`, `ensureRelation()`, `getNeighbors()`
-- ✅ **Bridge**: Attachments → Graph Relations automatisch
-- ✅ **Graph Inspector**: Debug-Panel für Graph-Exploration
+### Interaktion
 
-#### Hook-Fixes ✅
-- ✅ **Dexie-Hooks korrigiert**: `setTimeout` für TransactionInactiveError-Fix
-- ✅ Alle drei Komponenten (VoiceList, EventList, VoiceAttachments) gefixt
+- Onboarding minimal (`OnboardingFlow`)
+
+- `TextImpulseInput` + `VoiceHoldButton` + `services/voice.ts`
+
+- `CaptureImpulseCommand` → `thought-processor` + `afterImpulseInCollection`
+
+- Kontext: Ruhe / Normal / Fokus
+
+
+
+### UI & Themen
+
+- `CollectionInbox` — Sammelcontainer
+
+- `TopicList` + `ThreadDetailPanel` inline
+
+- `runAutoTopicEngine` — Muster, Zuordnung, Umsortieren
+
+- `recordTopicEngagement` — Wichtigkeit aus Nutzung (kein Button)
+
+- `MorningBriefing` + Session-KV
+
+- `OrientBubble` in `PresenceHeader`
+
+- Debug: VisualDebugCanvas, NewTopicQuick, Export, …
+
+
+
+### Verarbeitung
+
+- `thought-processor.ts`: Match bestehende Threads; sonst Sammelcontainer
+
+- `generateMorningBriefing()` + UI
+
+
 
 ---
 
-## ⚠️ Was fehlt noch?
 
-### Kritisch (für Phase 1)
 
-1. **Text-Input** ⚠️
-   - Text-Eingabe als Impulse
-   - UI-Komponente für Text-Input
-   - Integration mit `CaptureImpulseCommand`
+## 🟡 Teilweise
 
-2. **Integration Core → UI** ⚠️
-   - `ThreadQueryService` + `DailyQueryService` in UI einbinden
-   - Echte Thread-Snapshots statt Demo-Data
-   - Visual-State aus echten Daten generieren
 
-3. **Context-UI** ⚠️
-   - UI zum Setzen des Context-Modes
-   - Context-Mode im OverviewPanel anzeigen
-   - Context-Mode beeinflusst Visual-State
 
-4. **Thread-Management-UI** ⚠️
-   - Thread-Liste anzeigen
-   - Thread erstellen/aktivieren
-   - Thread-Status ändern (Archive, etc.)
+| Thema | Offen |
 
-5. **Tests** ⚠️
-   - Unit-Tests für Core-Logik
-   - Integration-Tests für Storage
-   - Tests für Eskalationslogik
+|-------|--------|
 
-### Wichtig (für Phase 1)
+| Hauptscreen-Layout | Bubble noch im Header; zentrale Bubble ~60 %, Swipes |
 
-6. **Lokale Verschlüsselung** ⚠️
-   - Web Crypto API Integration
-   - Key-Management
-   - Verschlüsselung für sensible Felder
+| Auto-Topic / Matcher | Heuristik mit echten Daten testen |
 
-7. **Visualisierung verbessern** ⚠️
-   - Echte Visual-State aus Daten
-   - Canvas/WebGL-light Rendering
-   - Fokus/Zoom funktional machen
+| `useThreadsStore` / `useImpulsesStore` | Optional (Cursor Schritt 5) |
 
-8. **HUD vollständig** ⚠️
-   - Thread-HUD anzeigen
-   - Unsicherheiten visualisieren
-   - Status-Anzeige
+| HUD / Eskalation | Engine da, Haupt-UI minimal |
 
-### Optional (für Phase 1)
+| Kontext ↔ Visual | Feintuning |
 
-9. **Voice-Transcription** ⚠️
-   - Echte Transcription (Web Speech API oder extern)
-   - Transcription als Impulse-Content
+| Voice | Kein TTS; Firefox ohne Web Speech |
 
-10. **Performance-Optimierung** ⚠️
-    - Lazy Loading für große Datenmengen
-    - Debouncing für häufige Updates
+
 
 ---
 
-## 🎯 Prioritätenliste (Nächste Schritte)
 
-### PRIORITÄT 1 — Integration & Funktionalität (Sofort)
 
-1. **Text-Input implementieren** 🔴
-   - Text-Input-Komponente
-   - Integration mit `CaptureImpulseCommand`
-   - Impulse aus Text erstellen
-   - **Geschätzt:** 2-3 Stunden
+## ⬜ Noch offen (Phase 1)
 
-2. **Core → UI Integration** 🔴
-   - `DailyQueryService` in `App.tsx` einbinden
-   - Echte Thread-Snapshots statt Demo-Data
-   - Visual-State aus echten Daten
-   - **Geschätzt:** 3-4 Stunden
 
-3. **Thread-Management-UI** 🔴
-   - Thread-Liste anzeigen
-   - Thread erstellen (aus Impulse oder manuell)
-   - Thread-Status ändern (Archive, etc.)
-   - **Geschätzt:** 4-5 Stunden
 
-### PRIORITÄT 2 — Context & UX (Diese Woche)
+1. **Hauptscreen** (Cursor Schritt 12) — Layout mobile-first final
 
-4. **Context-UI** 🟡
-   - Context-Mode-Setter (Dropdown/Buttons)
-   - Context-Mode im OverviewPanel anzeigen
-   - Context-Mode beeinflusst Visual-State
-   - **Geschätzt:** 2-3 Stunden
+2. **Abendritual** (Cursor Schritt 13)
 
-5. **Visualisierung verbessern** 🟡
-   - Echte Visual-State aus Daten generieren
-   - Canvas-Rendering verbessern
-   - Fokus/Zoom funktional machen
-   - **Geschätzt:** 4-6 Stunden
+3. **Sprach-Kommandos** — „Fass zusammen“, „Leg ab“
 
-6. **HUD vollständig** 🟡
-   - Thread-HUD anzeigen bei Fokus
-   - Unsicherheiten visualisieren
-   - Status-Anzeige
-   - **Geschätzt:** 3-4 Stunden
+4. **KI-Stub** — `VITE_AI_ENABLED` + API
 
-### PRIORITÄT 3 — Stabilität & Qualität (Nächste Woche)
+5. Playwright E2E (optional)
 
-7. **Tests schreiben** 🟢
-   - Unit-Tests für Core-Logik (ThreadLifecycle, GraphLinker, Escalation)
-   - Integration-Tests für Storage
-   - Tests für Eskalationslogik
-   - **Geschätzt:** 6-8 Stunden
 
-8. **Lokale Verschlüsselung** 🟢
-   - Web Crypto API Integration
-   - Key-Management
-   - Verschlüsselung für sensible Felder
-   - **Geschätzt:** 4-6 Stunden
-
-### PRIORITÄT 4 — Nice-to-Have (Später)
-
-9. **Voice-Transcription** 🔵
-   - Echte Transcription (Web Speech API oder extern)
-   - Transcription als Impulse-Content
-   - **Geschätzt:** 4-6 Stunden
-
-10. **Performance-Optimierung** 🔵
-    - Lazy Loading
-    - Debouncing
-    - **Geschätzt:** 2-3 Stunden
 
 ---
 
-## 📊 Fortschritt Phase 1
 
-**Geschätzt:** ~60-70% von Phase 1 abgeschlossen
 
-### Abgeschlossen:
-- ✅ Core Domain Objects (100%)
-- ✅ Graph-Engine (100%)
-- ✅ Thread-Lifecycle (100%)
-- ✅ Eskalationslogik (100%)
-- ✅ Export-Services (100%)
-- ✅ Commands (100%)
-- ✅ Voice-Input (80%)
-- ✅ Visual-Kernel (70%)
-- ✅ DB-Layer (100%)
-- ✅ Debug-UI (100%)
+## Cursor-Arbeitsplan (Schritte 1–13)
 
-### In Arbeit:
-- ⚠️ Text-Input (0%)
-- ⚠️ Core → UI Integration (30%)
-- ⚠️ Thread-Management-UI (0%)
-- ⚠️ Context-UI (50%)
-- ⚠️ Visualisierung (50%)
-- ⚠️ HUD (50%)
 
-### Noch nicht begonnen:
-- ⚠️ Tests (0%)
-- ⚠️ Lokale Verschlüsselung (0%)
-- ⚠️ Voice-Transcription (10% - Stub vorhanden)
+
+| Schritt | Thema | Status |
+
+|---------|--------|--------|
+
+| 1 | PWA | ✅ |
+
+| 2 | SQLite & Repositories | ✅ |
+
+| 3 | Verschlüsselung | ✅ |
+
+| 4 | Lifecycle & Graph | ✅ |
+
+| 5 | Zustand Stores | 🟡 |
+
+| 6 | Präsenz-Bubble | ✅ |
+
+| 7 | Sprache → Impulse | ✅ |
+
+| 8 | Auto-Topic-Engine | ✅ |
+
+| 9 | Gedanken-Verarbeitung | ✅ 🟡 |
+
+| 10 | Onboarding minimal | ✅ |
+
+| 11 | Morgenroutine UI | ✅ |
+
+| 12 | Hauptscreen-Layout | 🟡 |
+
+| 13 | Abendritual + Commands | ⬜ |
+
+
+
+Details: [`ORIENT_Cursor_v1.md`](./ORIENT_Cursor_v1.md)
+
+
 
 ---
 
-## 🎯 Nächste konkrete Schritte
 
-**WICHTIG:** Nach Delta 07 (Behavior & Presence Specification) ändert sich die Priorität:
 
-### Neue Entwicklungsreihenfolge (bindend):
+## Nächste Prioritäten
 
-1. **Behavior Layer** (Zustände & Regeln) - **Delta 08**
-2. **Interaction Mapping** (Swipe, Hold, Scroll)
-3. **Visuelle Präsenz** (Kugel)
-4. **Inhalte**
-5. **Feinschliff**
 
-**❗ UI kommt nach Verhalten, nicht davor.**
 
-### Delta 08: ORIENT Behavior Engine (Minimal)
+1. Schritt 12 — Hauptscreen-Layout
 
-- Kein UI. Kein Design.
-- Zustandsvariablen (`activityLevel`, `focusLevel`, `tempo`, `timeOfDay`, `sessionMood`)
-- Gewichtungslogik
-- einfache Regeln
-- Simulation per Logs
+2. Schritt 13 — Abendritual
 
-**Siehe:** `docs/ORIENT_DELTA07_BEHAVIOR_PRESENCE.md` für vollständige Spezifikation.
+3. HUD + Sprach-Kommandos
 
-**Geschätzte Zeit bis Phase 1 komplett:** 20–30 Stunden (nach Behavior Engine)
+4. Auto-Topic verfeinern
+
+
+
+**Geschätzte Restzeit Phase 1:** ~8–12 h
+
+
+
+---
+
+
+
+*Abgestimmt mit [`ORIENT_TODO_PHASE1.md`](./ORIENT_TODO_PHASE1.md) und [`TODO.md`](../TODO.md).*
+
+

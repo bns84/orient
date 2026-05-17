@@ -36,21 +36,21 @@ Es merkt sich:
 — Was er vermeidet
 — Wie er sich über Monate verändert
 
-### Schicht 2 — Die Themen
+### Schicht 2 — Die Themen (automatisch)
 
-Aus dem Menschen wachsen Themen.
+Aus dem Menschen wachsen Themen — **nicht aus Formularen**.
 
-Jedes Thema ist lebendig:
-— Es hat eine Geschichte
+**Sammelcontainer:** Alles was der Nutzer spricht oder tippt landet zuerst roh und unstrukturiert. Keine Pflicht-Kategorien, kein manuelles Anlegen.
+
+**Auto-Topic-Engine:** ORIENT erkennt Muster (wiederkehrende Gedanken, Begriffe, Kontexte) und legt Themen **selbst** an — ohne Rückfrage. Impulse werden laufend und **nachträglich** zugeordnet; wenn ein besseres Thema klar wird, sortiert ORIENT um.
+
+Jedes bestätigte Thema ist lebendig:
+— Es hat eine Geschichte (Impulse, Edges)
 — Es hat Verbindungen zu anderen Themen
-— Es wächst wenn der Nutzer es berührt
-— Es schläft wenn es lange ignoriert wird
+— Es wächst wenn der Nutzer es berührt (Sprache, Text, Fokus)
+— Es schläft wenn es lange ignoriert wird (Lifecycle)
 
-Themen entstehen durch:
-— Spracheingabe
-— Markierungen und Interesse-Signale
-— Beobachtung des Verhaltens
-— Selbstständige Erkennung durch ORIENT
+**Wichtigkeit** leitet ORIENT aus Nutzung ab (Impulse, Fokus) — kein „Wichtig“-Button.
 
 ### Schicht 3 — Die Welt
 

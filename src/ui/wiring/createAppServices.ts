@@ -22,6 +22,7 @@ import { ThreadQueryService } from '../../app/queries/ThreadQueryService';
 import { DailyQueryService } from '../../app/queries/DailyQueryService';
 import { CaptureImpulseCommand } from '../../app/commands/CaptureImpulseCommand';
 import { ArchiveThreadCommand } from '../../app/commands/ArchiveThreadCommand';
+import { ObserveThreadCommand } from '../../app/commands/ObserveThreadCommand';
 import { ExportThreadCommand } from '../../app/commands/ExportThreadCommand';
 import { ExportOrchestrator } from '../../app/export/ExportOrchestrator';
 import { MarkdownExportService } from '../../app/export/MarkdownExportService';
@@ -42,8 +43,12 @@ export const createAppServices = (db: LocalDatabase) => {
     edgeRepo: edgeRepo as any,
   });
   const dailyQuery = new DailyQueryService(threadRepo as any, threadQuery);
-  const captureImpulse = new CaptureImpulseCommand(impulseRepo as any);
+  const captureImpulse = new CaptureImpulseCommand(impulseRepo as any, {
+    threadRepo: threadRepo as any,
+    edgeRepo: edgeRepo as any,
+  });
   const archiveThread = new ArchiveThreadCommand(threadRepo as any);
+  const observeThread = new ObserveThreadCommand(threadRepo as any);
   const exportOrchestrator = new ExportOrchestrator(
     threadQuery,
     dailyQuery,
@@ -62,6 +67,8 @@ export const createAppServices = (db: LocalDatabase) => {
     dailyQuery,
     captureImpulse,
     archiveThread,
+    observeThread,
     exportThread,
+    exportOrchestrator,
   };
 };

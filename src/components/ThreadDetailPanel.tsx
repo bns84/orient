@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useAppServices } from '../ui/wiring/AppServicesContext';
 import { ThreadLifecycle } from '../core/threads/ThreadLifecycle';
 import { ThreadStatus } from '../core/threads/ThreadStatus';
+import { threadStatusLabel } from '../utils/threadStatusLabel';
 import type { ThreadSnapshot } from '../app/queries/types/ThreadSnapshot';
 import type { Impulse } from '../core/impulses/Impulse';
 
@@ -45,11 +46,7 @@ export function ThreadDetailPanel({ threadId, onChanged, onClose }: Props) {
   }, [reload]);
 
   if (!threadId) {
-    return (
-      <div style={{ fontSize: 13, opacity: 0.55, padding: '8px 0' }}>
-        Wähle ein Thema — oder lege einen Gedanken an.
-      </div>
-    );
+    return null;
   }
 
   if (!snapshot) {
@@ -110,7 +107,10 @@ export function ThreadDetailPanel({ threadId, onChanged, onClose }: Props) {
         <div>
           <div style={{ fontSize: 15, fontWeight: 600 }}>{snapshot.title}</div>
           <div style={{ fontSize: 12, opacity: 0.65, marginTop: 4 }}>
-            {snapshot.status} · Eskalation {snapshot.escalation.level}
+            {threadStatusLabel(snapshot.status)}
+            {snapshot.escalation.level > 0
+              ? ` · Hinweis Stufe ${snapshot.escalation.level}`
+              : ''}
           </div>
         </div>
         {onClose && (
