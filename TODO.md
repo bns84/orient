@@ -1,6 +1,6 @@
 # ORIENT — Projekt-TODO (Root)
 
-**Stand:** 2026-05-17 (für neuen Chat)  
+**Stand:** 2026-05-17 · Commit `8685ec3` · Branch `cursor/phase1-sqlite-onboarding-pwa`  
 **App:** Orient World Intelligence System (Phase 1, local-first PWA)
 
 > Kanonische Listen: [`docs/ORIENT_TODO_PHASE1.md`](docs/ORIENT_TODO_PHASE1.md) · [`docs/ORIENT_STATUS_PHASE1.md`](docs/ORIENT_STATUS_PHASE1.md) · [`docs/ORIENT_Cursor_v1.md`](docs/ORIENT_Cursor_v1.md)
@@ -9,20 +9,18 @@
 
 ## NEXT (als Nächstes)
 
-- [ ] **Hauptscreen-Layout** (Cursor Schritt 12): Bubble zentral ~60 %, Swipes, Voice unten
-- [ ] **Abendritual** (Cursor Schritt 13): nach 21:00, einmal fragen, kein Zwang
-- [ ] **HUD** — Eskalationsstufe / Unsicherheit im Haupt-UI sichtbar
-- [ ] **Auto-Topic-Engine** verfeinern (Muster, optional KI-Stub)
-- [ ] **`useThreadsStore` / `useImpulsesStore`** (Cursor Schritt 5, optional)
-- [ ] **Sprach-Kommandos** — „Fass zusammen“, „Leg ab“ (natürliche Sprache)
+- [ ] **Auto-Topic / Themen-Einordnung** — mit echten Daten testen, Heuristik nachschärfen
+- [ ] **Kontext ↔ Visual** — Eskalation/Präsenz und Bubble/2D-Visual feiner abstimmen
+- [ ] **`useThreadsStore` / `useImpulsesStore`** (optional, Cursor Schritt 5)
 
 ---
 
 ## IN ARBEIT / TEILWEISE
 
-- [~] 3-Schichten-UI — Sammelcontainer → Themen inline → Kontext/Inhalt; Swipes/zentrale Bubble fehlen
-- [~] Thread-Zuordnung — Match + `runAutoTopicEngine`; Heuristik iterieren
-- [~] Kontext/Eskalation ↔ Visual
+- [~] **Auto-Topic-Engine** — Clustering, periodischer Vollabgleich (6 h); Qualität am Datenbestand prüfen
+- [~] **KI-Stub** — `VITE_AI_ENABLED` + API angebunden; optional nutzbar, kein Pflicht-Feature
+- [~] **Nutzer-Kommandos** — Basis (Voice/Text); ggf. mehr Formulierungen / Randfälle
+- [~] **Bubble** — daten gekoppelt; weiteres Feintuning bewusst pausiert
 
 ---
 
@@ -34,25 +32,27 @@
 - [x] Thread-Lifecycle + Graph (Core + SQLite Edges)
 - [x] Onboarding: nur Companion-Name + Kommunikationsstil (aktiv/passiv)
 - [x] **Sammelcontainer** (`CollectionInbox`) — roh, ohne Kategorien
-- [x] **Auto-Topic-Engine** (`runAutoTopicEngine`) — vollautomatisch, nachträglich umsortieren
+- [x] **Auto-Topic-Engine** — `topic-matching`, Vollabgleich, nachträgliches Umsortieren
+- [x] **Hauptscreen** (`HomeScreen`) — Bubble ~60 %, Swipes, Voice unten
+- [x] **Morgenroutine** + **Abendritual** (`MorningBriefing`, `EveningRitual`)
+- [x] **HUD** — Eskalation / Unsicherheit (`PresenceHud`)
+- [x] **Sprach-Kommandos** — „Fass zusammen“, „Leg ab“, „Ignorier“, „Exportier“ (`commands.ts`)
 - [x] Navigation: Themen-Detail inline, kein Focusable-Overlay
-- [x] **Morgenroutine-UI** (`MorningBriefing`, `morning-briefing.ts`)
 - [x] Share-System entfernt (v3.0: Teilen per Sprache)
 - [x] Zustand `useAppStore` (Präsenz, Profil, Mood)
-- [x] **OrientBubble** (R3F, 8 Regionen, presence-States)
+- [x] **OrientBubble** (R3F, 8 Regionen, Wissens-Snapshot, Kontext-Modifikatoren)
 - [x] Text- + Voice-Input → Impulse (`CaptureImpulseCommand`)
 - [x] Web Speech API (`services/voice.ts`)
-- [x] `thought-processor.ts` — Match bestehende Threads, sonst Sammelcontainer
+- [x] `thought-processor.ts` — strengeres Erfassen, sonst Sammelcontainer + Engine
 - [x] Export Markdown / Cursor Pack
-- [x] Vitest-Suite (inkl. `auto-topic-engine`, `morning-briefing`)
-- [x] Voice-Button rund; 2D-Visual nur Debug
+- [x] Vitest-Suite (auto-topic, topic-matching, morning/evening-ritual, commands, …)
 - [x] `npm run dev:clean` für Vite-Cache
 
 ---
 
 ## BACKLOG (nach Phase 1)
 
-- [ ] KI-Anreicherung (`VITE_AI_ENABLED` + API)
+- [ ] KI-Anreicherung produktiv (über Stub hinaus)
 - [ ] Supabase/Sync (Version 2)
 - [ ] Playwright E2E
 - [ ] TTS / Wake Word

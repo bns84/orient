@@ -313,7 +313,7 @@ Ton: ruhig, kurz (ORIENT_Stimme.md). Keine Notification-Badges.
 
 ## Schritt 12 — Hauptscreen + Context + Behavior
 
-**Status im Repo:** 🟡 Teilweise — 3 Panels + Behavior-Simulation ✅; Bubble noch im Header, Swipes/zentrale Bubble ⬜.
+**Status im Repo:** ✅ — `HomeScreen` (Bubble ~60 %, Swipes, Voice unten), `PresenceHud`, Kontext-Modi; Feintuning Kontext ↔ Visual 🟡.
 
 **Cursor Prompt:**
 ```
@@ -342,7 +342,7 @@ Siehe ORIENT_SYSTEMLOGIC.md + ORIENT_KONZEPT.md Kap. 4.6.
 
 ## Schritt 13 — Abendritual + Export-Basis
 
-**Status im Repo:** 🟡 Export ✅ · Abendritual-UI ⬜ · Sprach-Kommandos ⬜.
+**Status im Repo:** ✅ — `EveningRitual`, `commands.ts` (Voice/Text), Export ✅; Randfälle/Phrasen 🟡.
 
 **Cursor Prompt:**
 ```
@@ -372,8 +372,8 @@ Siehe ORIENT_EXPORT_FORMATS.md und ORIENT_TODO_PHASE1 Task D10/D11.
 - [x] Bubble reagiert auf presence
 - [x] Voice → Impulse in SQLite (verschlüsselt)
 - [x] Threads mit Lifecycle (DORMANT bleibt erhalten)
-- [~] Context „Ruhe“ (Modus da; Eskalation/Push-Feintuning offen)
-- [x] Morgen-Briefing UI (Abend-UI fehlt noch)
+- [~] Context „Ruhe“ (Modus da; Eskalation/Visual-Feintuning offen)
+- [x] Morgen- + Abend-Briefing UI
 - [x] **Kein** Supabase, **kein** Sync-Zwang
 - [x] Mit `VITE_AI_ENABLED=false` voll nutzbar
 
