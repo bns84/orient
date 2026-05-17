@@ -6,6 +6,7 @@ import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { ContextMode } from '../../core/escalation/ContextMode';
+import type { EscalationLevel } from '../../core/escalation/EscalationLevel';
 import type { PresenceState } from '../../store/types';
 import type { BubbleKnowledgeSnapshot } from './bubbleKnowledge';
 import { BubbleErrorBoundary } from './BubbleErrorBoundary';
@@ -14,6 +15,7 @@ import { NeuralNetworkScene } from './NeuralNetworkScene';
 export type OrientBubbleProps = {
   state?: PresenceState;
   contextMode?: ContextMode;
+  escalationLevel?: EscalationLevel;
   knowledge?: BubbleKnowledgeSnapshot | null;
   working?: boolean;
   sortHighlightRegion?: number | null;
@@ -25,6 +27,7 @@ export type OrientBubbleProps = {
 export function OrientBubble({
   state = 'rest',
   contextMode,
+  escalationLevel,
   knowledge = null,
   working = false,
   sortHighlightRegion = null,
@@ -66,6 +69,7 @@ export function OrientBubble({
             <NeuralNetworkScene
               state={state}
               contextMode={contextMode}
+              escalationLevel={escalationLevel}
               knowledge={knowledge}
               working={working}
               sortHighlightRegion={sortHighlightRegion}

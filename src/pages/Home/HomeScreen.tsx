@@ -37,6 +37,7 @@ import { VisualStatePipeline } from '../../visual/pipeline/VisualStatePipeline';
 import type { VisualState } from '../../visual/kernel/VisualState';
 import { startBehaviorSimulation } from '../../behavior/simulate';
 import { ContextMode } from '../../core/escalation/ContextMode';
+import { EscalationLevel } from '../../core/escalation/EscalationLevel';
 import { getPresentationHints } from '../../behavior/engine';
 import { useAppStore } from '../../store/useAppStore';
 import { recordTopicEngagement } from '../../db/interest';
@@ -59,6 +60,8 @@ export function HomeScreen() {
   const [collectionRefreshKey, setCollectionRefreshKey] = useState(0);
   const [bubbleSize, setBubbleSize] = useState(260);
   const bubbleSlotRef = useRef<HTMLDivElement>(null);
+  const prevEscalationRef = useRef<EscalationLevel | null>(null);
+  const pulsePresence = useAppStore((s) => s.pulsePresence);
 
   const rituals = useDailyRituals(true);
   const hudRefreshKey = interestRankKey + collectionRefreshKey;
@@ -200,6 +203,21 @@ export function HomeScreen() {
     void refreshVisual();
   }, [refreshVisual]);
 
+  useEffect(() => {
+    if (!presenceHud?.visible) return;
+    const level = presenceHud.escalationLevel;
+    const prev = prevEscalationRef.current;
+    if (
+      level >= EscalationLevel.HINT &&
+      prev !== null &&
+      level > prev &&
+      presenceHud.hasFocus
+    ) {
+      pulsePresence('think', 1100);
+    }
+    prevEscalationRef.current = level;
+  }, [presenceHud?.escalationLevel, presenceHud?.visible, presenceHud?.hasFocus, pulsePresence]);
+
   const applyMode = async (m: ContextMode) => {
     await services.contextService.setMode(m);
     await refreshVisual(m);
@@ -243,6 +261,7 @@ export function HomeScreen() {
               <OrientBubble
                 state={presence}
                 contextMode={mode}
+                escalationLevel={presenceHud?.escalationLevel}
                 knowledge={bubbleKnowledgeSnapshot}
                 working={bubbleWorking}
                 sortHighlightRegion={sortHighlightRegion}

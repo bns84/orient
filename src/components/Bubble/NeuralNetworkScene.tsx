@@ -8,9 +8,11 @@ import { OrbitControls } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { ContextMode } from '../../core/escalation/ContextMode';
+import { EscalationLevel } from '../../core/escalation/EscalationLevel';
 import type { PresenceState } from '../../store/types';
 import type { BubbleKnowledgeSnapshot } from './bubbleKnowledge';
 import { contextBubbleModifier } from './contextBubbleModifiers';
+import { escalationBubbleModifier, mergeBubbleModifiers } from './escalationBubbleModifiers';
 import { AMBER_RGB, BUBBLE_REGIONS, POINT_SIZE, SPHERE_RADIUS } from './bubbleRegions';
 import {
   edgeBaseColor,
@@ -41,6 +43,7 @@ const EMPTY_KNOWLEDGE: BubbleKnowledgeSnapshot = {
 type Props = {
   state: PresenceState;
   contextMode?: ContextMode;
+  escalationLevel?: EscalationLevel;
   knowledge?: BubbleKnowledgeSnapshot | null;
   working?: boolean;
   sortHighlightRegion?: number | null;
@@ -67,12 +70,14 @@ function GlassSphere() {
 function NeuralNetwork({
   state,
   contextMode = ContextMode.NORMAL,
+  escalationLevel = EscalationLevel.OBSERVE,
   knowledge,
   working,
   sortHighlightRegion,
 }: {
   state: PresenceState;
   contextMode: ContextMode;
+  escalationLevel: EscalationLevel;
   knowledge: BubbleKnowledgeSnapshot;
   working: boolean;
   sortHighlightRegion: number | null;
@@ -84,6 +89,7 @@ function NeuralNetwork({
   const coreRef = useRef<THREE.Mesh>(null);
   const stateRef = useRef(state);
   const contextRef = useRef(contextMode);
+  const escalationRef = useRef(escalationLevel);
   const knowledgeRef = useRef(knowledge);
   const workingRef = useRef(working);
   const sortRef = useRef(sortHighlightRegion);
@@ -91,6 +97,7 @@ function NeuralNetwork({
   const lastSortRegionRef = useRef<number | null>(null);
   stateRef.current = state;
   contextRef.current = contextMode;
+  escalationRef.current = escalationLevel;
   knowledgeRef.current = knowledge;
   workingRef.current = working;
   sortRef.current = sortHighlightRegion;
@@ -143,7 +150,10 @@ function NeuralNetwork({
 
     const k = knowledgeRef.current;
     const cfg = PRESENCE_STATE_CONFIG[stateRef.current];
-    const ctxMod = contextBubbleModifier(contextRef.current);
+    const ctxMod = mergeBubbleModifiers(
+      contextBubbleModifier(contextRef.current),
+      escalationBubbleModifier(escalationRef.current),
+    );
     const presenceActivation = cfg.activation;
     const activation = Math.min(
       1,
@@ -339,6 +349,7 @@ function NeuralNetwork({
 export function NeuralNetworkScene({
   state,
   contextMode = ContextMode.NORMAL,
+  escalationLevel = EscalationLevel.OBSERVE,
   knowledge,
   working = false,
   sortHighlightRegion = null,
@@ -354,6 +365,7 @@ export function NeuralNetworkScene({
       <NeuralNetwork
         state={state}
         contextMode={contextMode}
+        escalationLevel={escalationLevel}
         knowledge={k}
         working={working}
         sortHighlightRegion={sortHighlightRegion}

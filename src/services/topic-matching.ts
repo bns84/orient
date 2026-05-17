@@ -102,6 +102,46 @@ export function significantTokens(s: string): string[] {
   return topicTokens(s).filter((w) => w.length >= 3 && !STOPWORDS.has(w));
 }
 
+/** Grobe deutsche Wortstamm-Normalisierung für Matching (kein NLP-Stack). */
+export function germanStem(token: string): string {
+  if (token.length <= 3) return token;
+  let t = token;
+  const suffixes = [
+    'ungen',
+    'ung',
+    'heit',
+    'keit',
+    'chen',
+    'lein',
+    'isch',
+    'lich',
+    'est',
+    'er',
+    'en',
+    'em',
+    'es',
+    'e',
+    'n',
+    's',
+  ];
+  for (const suf of suffixes) {
+    if (t.length > suf.length + 2 && t.endsWith(suf)) {
+      t = t.slice(0, -suf.length);
+      break;
+    }
+  }
+  return t.length >= 2 ? t : token;
+}
+
+function stemsMatch(a: string, b: string): boolean {
+  if (a === b) return true;
+  const sa = germanStem(a);
+  const sb = germanStem(b);
+  if (sa === sb) return true;
+  if (sa.length >= 4 && sb.length >= 4 && (sa.startsWith(sb) || sb.startsWith(sa))) return true;
+  return false;
+}
+
 function threadStatusOf(thread: Thread): string {
   return String(thread.status ?? ThreadStatus.ACTIVE);
 }
@@ -126,7 +166,8 @@ function tokenMatchesTitleWord(contentWords: string[], titleToken: string): bool
   return contentWords.some(
     (w) =>
       w.length >= 3 &&
-      (w.startsWith(titleToken) ||
+      (stemsMatch(w, titleToken) ||
+        w.startsWith(titleToken) ||
         titleToken.startsWith(w) ||
         (titleToken.length >= 4 && w.includes(titleToken)) ||
         (w.length >= 4 && titleToken.includes(w))),
@@ -148,13 +189,16 @@ export function scoreThreadMatch(text: string, thread: Thread): number {
     score += 16;
   }
 
-  const titleOverlap = titleTokenList.filter((t) => contentTokens.has(t)).length;
+  const contentStemSet = new Set([...contentTokens].map(germanStem));
+  const titleOverlap = titleTokenList.filter(
+    (t) => contentTokens.has(t) || contentStemSet.has(germanStem(t)),
+  ).length;
   if (titleTokenList.length > 0) {
     score += Math.round((titleOverlap / titleTokenList.length) * 12);
   }
 
   for (const token of titleTokenList) {
-    if (contentTokens.has(token)) score += 4;
+    if (contentTokens.has(token) || contentStemSet.has(germanStem(token))) score += 4;
     else if (tokenMatchesTitleWord(contentWords, token)) score += 3;
   }
 
