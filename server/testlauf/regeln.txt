@@ -1,0 +1,2 @@
+# Eine Regel pro Zeile („KI beachtet“). Zeilen mit # werden ignoriert.
+# Trage hier die Testregeln ein.

@@ -1,0 +1,2 @@
+# Eine Eingabe pro Zeile. Zeilen mit # werden ignoriert.
+# Trage hier deine zehn Testeingaben ein.

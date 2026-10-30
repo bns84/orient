@@ -1,23 +1,21 @@
 /**
- * Optionaler KI-Client — OpenAI-kompatibles Chat-API.
+ * Optionaler KI-Client — spricht standardmäßig mit dem Pförtner (OpenAI-kompatibel), ohne Schlüssel.
  * Blockiert nie; bei Fehler → null.
  */
 
 import { buildOrientSystemPrompt } from './systemPrompt';
+import { orientServerUrl } from '../orient/serverUrl';
 
 const TIMEOUT_MS = 12_000;
 
 export function isAiEnrichmentEnabled(): boolean {
-  return import.meta.env.VITE_AI_ENABLED === 'true' && Boolean(import.meta.env.VITE_AI_API_URL?.trim());
+  return import.meta.env.VITE_AI_ENABLED === 'true';
 }
 
 function apiBase(): string {
-  return import.meta.env.VITE_AI_API_URL!.replace(/\/$/, '');
-}
-
-function apiKey(): string | undefined {
-  const k = import.meta.env.VITE_AI_API_KEY?.trim();
-  return k || undefined;
+  // Standard: der Pförtner (dort liegen die Schlüssel, nicht im Browser)
+  const custom = import.meta.env.VITE_AI_API_URL?.trim();
+  return (custom || `${orientServerUrl()}/v1`).replace(/\/$/, '');
 }
 
 function model(): string {
@@ -46,8 +44,6 @@ export async function aiJsonComplete<T>(params: {
 
   try {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    const key = apiKey();
-    if (key) headers.Authorization = `Bearer ${key}`;
 
     const res = await fetch(`${apiBase()}/chat/completions`, {
       method: 'POST',

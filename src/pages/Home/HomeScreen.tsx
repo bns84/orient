@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppServices } from '../../ui/wiring/AppServicesContext';
 import { VisualDebugCanvas } from '../../ui/components/VisualDebugCanvas';
 import { VoiceHoldButton } from '../../components/VoiceHoldButton';
+import { AnswerLine } from '../../components/AnswerLine';
 import { TextImpulseInput } from '../../components/TextImpulseInput';
 import { ThreadDetailPanel } from '../../components/ThreadDetailPanel';
 import { CollectionInbox } from '../../components/CollectionInbox';
@@ -213,7 +214,7 @@ export function HomeScreen() {
               height={bubbleSize}
             />
           </div>
-          <p className="home-main__hint">{COMPANION_HINT}</p>
+          <AnswerLine hint={COMPANION_HINT} />
         </section>
       </main>
 

@@ -11,7 +11,11 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "server:build": "tsc -p server/tsconfig.json",
+    "server": "npm run server:build && node server-dist/index.js",
+    "server:check": "tsc -p server/tsconfig.json --noEmit",
+    "testlauf": "npm run server:build && node server-dist/testlauf.js"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

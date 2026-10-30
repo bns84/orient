@@ -10,6 +10,7 @@ import { useAppServices } from '../ui/wiring/AppServicesContext';
 import { logEvent } from '../db/events';
 import { useAppStore } from '../store/useAppStore';
 import { tryExecuteVoiceCommand } from '../services/commands';
+import { useAnswerStore } from '../store/useAnswerStore';
 import type { AutoTopicResult } from '../services/auto-topic-engine';
 
 const BTN_SIZE = 76;
@@ -79,6 +80,9 @@ export function VoiceHoldButton({ threadId, onImpulseCaptured, reconcileTopics }
           }
           return;
         }
+
+        // Der Pförtner antwortet; die Antwort erscheint unter der Bubble.
+        void useAnswerStore.getState().ask(transcript, 'voice');
 
         const res = await captureImpulse.execute(
           {
