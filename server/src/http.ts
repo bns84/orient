@@ -9,8 +9,11 @@ import type { Orient } from './orient.js';
 import type { Source } from './tree/types.js';
 import type { ChatMessage } from './models/types.js';
 import { effectiveDailyLimit, spentToday } from './tree/stations.js';
+import { EarError, type Ear } from './ear.js';
 
 const MAX_BODY_BYTES = 1_000_000;
+/** Aufnahmen dürfen größer sein (ca. 25 MB = viele Minuten Sprache) */
+const MAX_AUDIO_BYTES = 25_000_000;
 
 class HttpError extends Error {
   constructor(
@@ -21,22 +24,26 @@ class HttpError extends Error {
   }
 }
 
-function readBody(req: IncomingMessage): Promise<string> {
+function readBuffer(req: IncomingMessage, maxBytes: number): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     let size = 0;
     const chunks: Buffer[] = [];
     req.on('data', (chunk: Buffer) => {
       size += chunk.length;
-      if (size > MAX_BODY_BYTES) {
+      if (size > maxBytes) {
         reject(new HttpError(413, 'Anfrage zu groß'));
         req.destroy();
         return;
       }
       chunks.push(chunk);
     });
-    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
+}
+
+async function readBody(req: IncomingMessage): Promise<string> {
+  return (await readBuffer(req, MAX_BODY_BYTES)).toString('utf8');
 }
 
 async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> {
@@ -63,7 +70,7 @@ function contentToText(content: unknown): string {
   return '';
 }
 
-export function createHttpServer(orient: Orient): Server {
+export function createHttpServer(orient: Orient, ear: Ear | null = null): Server {
   const { config } = orient;
 
   function send(res: ServerResponse, status: number, body: unknown, origin: string | null): void {
@@ -116,6 +123,7 @@ export function createHttpServer(orient: Orient): Server {
           },
           todayCostUsd: spentToday(orient.deps, config.userId, orient.clock()),
           dailyLimitUsd: effectiveDailyLimit(orient.deps, config.userId),
+          ear: ear ? { mode: ear.mode, ready: await ear.ready() } : { mode: 'off', ready: false },
         },
         echoOrigin,
       );
@@ -161,6 +169,34 @@ export function createHttpServer(orient: Orient): Server {
         companionName: typeof body.companionName === 'string' ? body.companionName : undefined,
       });
       send(res, 200, result, echoOrigin);
+      return;
+    }
+
+    // Das Ohr: Aufnahme rein, Text raus. Die Aufnahme geht nur an den Dolmetscher auf diesem Rechner.
+    if (req.method === 'POST' && path === '/api/hear') {
+      if (!ear) {
+        send(res, 503, { error: 'Das Ohr ist ausgeschaltet.' }, echoOrigin);
+        return;
+      }
+      const audio = await readBuffer(req, MAX_AUDIO_BYTES);
+      if (audio.length === 0) {
+        send(res, 400, { error: 'Die Aufnahme war leer.' }, echoOrigin);
+        return;
+      }
+      const mime = typeof req.headers['content-type'] === 'string' ? req.headers['content-type'] : '';
+      const lang = (url.searchParams.get('lang') ?? 'de').slice(0, 8);
+      try {
+        const out = await ear.transcribe(audio, mime, lang);
+        send(res, 200, out, echoOrigin);
+      } catch (err) {
+        const unreachable = err instanceof EarError && err.unreachable;
+        send(
+          res,
+          unreachable ? 503 : 502,
+          { error: err instanceof Error ? err.message : String(err) },
+          echoOrigin,
+        );
+      }
       return;
     }
 

@@ -1,7 +1,8 @@
 /**
  * ORIENT - Voice Recorder Hook
  *
- * Press & Hold: MediaRecorder (Blob) + Web Speech API (Transkript).
+ * Press & Hold: MediaRecorder (Blob). Das Transkript kommt vom eigenen Ohr (Pförtner → Dolmetscher/Whisper).
+ * Nur wenn der Schalter auf 'browser' steht, hört zusätzlich die Browser-Spracherkennung zu.
  */
 
 import { useCallback, useRef, useState } from 'react';
@@ -13,6 +14,7 @@ import {
   isSpeechRecognitionSupported,
   type PushToTalkRecognizer,
 } from '../services/voice';
+import { earMode, hearPfoertner } from '../services/orient/earClient';
 
 type Status = 'idle' | 'arming' | 'recording' | 'saving' | 'error';
 
@@ -69,17 +71,19 @@ export function useVoiceRecorder(options?: VoiceRecorderOptions) {
 
       const stream = await ensureMic();
 
-      speechRef.current = createPushToTalkRecognizer({
-        lang: 'de-DE',
-        onInterim: (text) => {
-          setInterimTranscript(text);
-          optionsRef.current?.onInterimTranscript?.(text);
-        },
-      });
-      speechRef.current?.start();
+      if (earMode() === 'browser') {
+        speechRef.current = createPushToTalkRecognizer({
+          lang: 'de-DE',
+          onInterim: (text) => {
+            setInterimTranscript(text);
+            optionsRef.current?.onInterimTranscript?.(text);
+          },
+        });
+        speechRef.current?.start();
 
-      if (!isSpeechRecognitionSupported()) {
-        await logEvent('voice.transcription.unsupported', {});
+        if (!isSpeechRecognitionSupported()) {
+          await logEvent('voice.transcription.unsupported', {});
+        }
       }
 
       const mimeCandidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'];
@@ -123,10 +127,19 @@ export function useVoiceRecorder(options?: VoiceRecorderOptions) {
           });
 
           let transcript = '';
+          let earMessage: string | null = null;
           const speech = speechRef.current;
           speechRef.current = null;
 
-          if (speech) {
+          if (earMode() === 'own') {
+            const heard = await hearPfoertner(blob);
+            if (heard.ok) {
+              transcript = heard.text;
+            } else {
+              earMessage = heard.message;
+              await logEvent('voice.transcription.error', { id: voiceId, message: heard.message });
+            }
+          } else if (speech) {
             try {
               transcript = (await speech.stop()).trim();
             } catch (err) {
@@ -148,9 +161,12 @@ export function useVoiceRecorder(options?: VoiceRecorderOptions) {
             await logEvent('voice.transcription.done', { id: voiceId, length: transcript.length });
             await optionsRef.current?.onTranscriptReady?.(voiceId, transcript);
           } else {
-            const note = isSpeechRecognitionSupported()
-              ? 'Kein Text erkannt'
-              : 'Spracherkennung nicht verfügbar (z. B. Chrome/Edge)';
+            const note =
+              earMessage ??
+              (earMode() === 'own' || isSpeechRecognitionSupported()
+                ? 'Kein Text erkannt'
+                : 'Spracherkennung nicht verfügbar (z. B. Chrome/Edge)');
+            if (earMessage) setError(earMessage);
             await orientDb.voice.update(voiceId, {
               status: 'done',
               note,
@@ -204,7 +220,7 @@ export function useVoiceRecorder(options?: VoiceRecorderOptions) {
     error,
     durationMs,
     interimTranscript,
-    speechSupported: isSpeechRecognitionSupported(),
+    speechSupported: earMode() === 'own' ? true : isSpeechRecognitionSupported(),
     start,
     stop,
   };

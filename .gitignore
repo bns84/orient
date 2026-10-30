@@ -43,3 +43,7 @@ server-dist/
 server/.env
 server/data/
 server/testlauf/ergebnis-*.md
+
+# Dolmetscher
+dolmetscher/.venv/
+dolmetscher/__pycache__/

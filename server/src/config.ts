@@ -1,10 +1,11 @@
 /**
  * ORIENT-Pförtner — Einstellungen.
  *
- * Drei Schrauben für den späteren Umzug (Spezifikation Abschnitt 9):
+ * Vier Schrauben für den späteren Umzug (Spezifikation Abschnitt 9, dazu das Ohr):
  *  1. Adresse des Servers   → ORIENT_HOST / ORIENT_PORT (die App kennt nur diese Adresse)
  *  2. Speicherort der Datenbank → ORIENT_DB_PATH
  *  3. Modellanschluss       → ORIENT_MODEL + Schlüssel/Modellnamen
+ *  4. Adresse des Dolmetschers (Ohr/Whisper) → ORIENT_EAR_URL
  *
  * Schlüssel stehen nur hier (Datei server/.env), nie im Browser.
  */
@@ -35,6 +36,8 @@ export interface Config {
   maxTokens: number;
   requestTimeoutMs: number;
   allowedOrigins: string[];
+  /** Das Ohr: Adresse des Dolmetschers (vierte Schraube) */
+  ear: { mode: 'whisper' | 'mock'; url: string; timeoutMs: number };
 }
 
 export function findProjectRoot(start: string = dirname(fileURLToPath(import.meta.url))): string {
@@ -136,5 +139,10 @@ export function loadConfig(options: LoadConfigOptions = {}): Config {
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean),
+    ear: {
+      mode: str(env.ORIENT_EAR, 'whisper').toLowerCase() === 'mock' ? 'mock' : 'whisper',
+      url: str(env.ORIENT_EAR_URL, 'http://127.0.0.1:8788').replace(/\/$/, ''),
+      timeoutMs: Math.max(5_000, Math.round(num(env.ORIENT_EAR_TIMEOUT_MS, 120_000))),
+    },
   };
 }

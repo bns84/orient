@@ -20,6 +20,7 @@ interface ImportMetaEnv {
   readonly VITE_AI_ENABLED?: string;
   readonly VITE_AI_API_URL?: string;
   readonly VITE_ORIENT_SERVER_URL?: string;
+  readonly VITE_ORIENT_EAR?: string;
   readonly VITE_AI_MODEL?: string;
 }
 

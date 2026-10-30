@@ -5,6 +5,7 @@
 import { loadConfig } from './config.js';
 import { createHttpServer } from './http.js';
 import { createModels, pickModel } from './models/index.js';
+import { HttpEar, MockEar, type Ear } from './ear.js';
 import { Orient } from './orient.js';
 import { Brain } from './store.js';
 import { effectiveDailyLimit, spentToday } from './tree/stations.js';
@@ -16,7 +17,8 @@ async function main(): Promise<void> {
   const model = pickModel(models, config.activeModel);
   const brain = await Brain.open(config.dbPath);
   const orient = new Orient(brain, model, config);
-  const server = createHttpServer(orient);
+  const ear: Ear = config.ear.mode === 'mock' ? new MockEar() : new HttpEar(config.ear.url, config.ear.timeoutMs);
+  const server = createHttpServer(orient, ear);
 
   server.on('error', (err: NodeJS.ErrnoException) => {
     if (err.code === 'EADDRINUSE') {
@@ -43,6 +45,15 @@ async function main(): Promise<void> {
     );
     console.log(`  Tageslimit:   ${formatUsd(limit)} Dollar (heute bisher ${formatUsd(spent)})`);
     console.log(`  Datenbank:    ${config.dbPath}`);
+    void ear.ready().then((ok) => {
+      console.log(
+        ear.mode === 'mock'
+          ? '  Ohr:          Ersatz-Ohr (Testsatz, hört nicht wirklich zu)'
+          : ok
+            ? `  Ohr:          Dolmetscher bereit (${config.ear.url})`
+            : `  Ohr:          Dolmetscher noch nicht erreichbar (${config.ear.url}), er lädt evtl. noch`,
+      );
+    });
     console.log('');
     console.log('Dieses Fenster offen lassen, solange du ORIENT benutzt.');
   });
