@@ -5,8 +5,10 @@ import {
   CAPTURE_MATCH_OPTIONS,
   detectTopicCluster,
   findBestThreadMatch,
+  findThreadBySimilarTitle,
   germanStem,
   scoreThreadMatch,
+  titleSimilarity,
 } from '../../../src/services/topic-matching';
 
 describe('topic-matching', () => {
@@ -115,5 +117,25 @@ describe('topic-matching', () => {
 
     const vague = findBestThreadMatch('Heute war ein ruhiger Tag', threads, CAPTURE_MATCH_OPTIONS);
     expect(vague).toBeNull();
+  });
+
+  it('findThreadBySimilarTitle matches near-duplicate titles', () => {
+    const threads = [
+      {
+        id: 't1',
+        title: 'Wirtschaft',
+        status: ThreadStatus.ACTIVE,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        metrics: {
+          recencyScore: 0.5,
+          frequencyScore: 0.5,
+          confidenceScore: 0.5,
+          userRelevanceScore: 0.5,
+        },
+      },
+    ];
+    expect(titleSimilarity('Wirtschaft', 'Wirtschaftspolitik')).toBeGreaterThanOrEqual(0.7);
+    expect(findThreadBySimilarTitle(threads, 'Wirtschaftliche Lage')?.id).toBe('t1');
   });
 });

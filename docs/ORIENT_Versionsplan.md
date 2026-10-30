@@ -26,7 +26,7 @@ Das Fundament bleibt immer gleich.
 — Ideenspeicher — jede Idee landet sicher, nichts geht verloren
 — Morgenroutine — freundliche Begrüßung, Tagesstruktur, was steht an
 — Abendritual — gute Nacht, letzte Frage, loslassen
-— Onboarding — drei Wege rein, eigener Name, Persönlichkeits-Abfrage
+— Onboarding — das Erwachen: „Ich … ich … ich bin.", dann hört ORIENT zu (siehe Spezifikation, Abschnitt 3)
 — Offline-First — funktioniert immer, sync wenn online
 — Basis-Behavior-Engine — Aktivität, Fokus, Müdigkeit erkennen
 

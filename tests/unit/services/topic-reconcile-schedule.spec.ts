@@ -25,10 +25,17 @@ describe('topic-reconcile-schedule', () => {
   });
 
   it('skips until interval elapsed', () => {
+    localStorage.setItem('orient.topicReconcile.engineVersion', '2');
     markPeriodicTopicReconcileDone(1_000_000);
     expect(shouldRunPeriodicTopicReconcile(1_000_000 + TOPIC_RECONCILE_INTERVAL_MS - 1)).toBe(
       false,
     );
     expect(shouldRunPeriodicTopicReconcile(1_000_000 + TOPIC_RECONCILE_INTERVAL_MS)).toBe(true);
+  });
+
+  it('forces full reconcile after engine version bump', () => {
+    localStorage.setItem('orient.topicReconcile.engineVersion', '1');
+    localStorage.setItem('orient.topicReconcile.lastFullAt', String(Date.now()));
+    expect(shouldRunPeriodicTopicReconcile()).toBe(true);
   });
 });

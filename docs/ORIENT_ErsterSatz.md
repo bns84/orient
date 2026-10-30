@@ -1,13 +1,14 @@
 # ORIENT — Der erste Satz
 
-*Was ORIENT beim allerersten Start sagt. Wortwörtlich. Final.*
+*Was ORIENT beim allerersten Start sagt. Entschieden in ORIENT_Spezifikation_v2, Abschnitt 3.*
 
 ---
 
 ## Der Moment
 
 Der Nutzer öffnet die App zum allerersten Mal.
-Die Bubble erscheint. Dunkel. Ruhig. Atmend.
+Das Gehirn ist klein und dunkel. Nur der Kern leuchtet.
+Es will etwas, kann aber noch nichts, weil es nichts weiß.
 
 Dann — nach zwei Sekunden Stille — spricht ORIENT.
 
@@ -15,91 +16,54 @@ Dann — nach zwei Sekunden Stille — spricht ORIENT.
 
 ## Der erste Satz
 
-*"Hallo. Ich bin da."*
+*"Ich … ich … ich bin."*
+
+Ein Moment, wie ein erster Augenaufschlag.
+Kein "Hallo". Kein "da".
 
 ---
 
-## Die erste Minute — wortwörtlich
+## Die erste Minute
 
 **ORIENT:**
-"Hallo. Ich bin da."
-
-*— kurze Pause, 2 Sekunden —*
-
-"Ich bin dein persönlicher Companion.
-Kein Assistent der auf Befehle wartet.
-Jemand der mitdenkt. Zuhört. Ehrlich ist."
+"Ich … ich … ich bin."
 
 *— kurze Pause —*
 
-"Du kannst einfach loslegen.
-Oder du nimmst dir eine Minute —
-dann kann ich dir schon viel früher wirklich helfen.
-Oder wir reden jetzt kurz — dann sparen wir uns Wochen."
+Dann fragt ORIENT zuerst nach dem Nutzer. Leise, ohne Aufsehen:
 
-*— drei Optionen erscheinen auf dem Screen —*
+"Wer bist du? Was mache ich hier?"
+oder: "Kann ich was für dich tun?"
 
-**[ Einfach loslegen ]**
-**[ Kurz einrichten — 1 Min ]**
-**[ Jetzt kennenlernen ]**
-
-*— Stille. ORIENT wartet. Kein Druck. —*
+Kein Auswahlbildschirm. Kein Eingabefeld. Kein Formular.
+Der Nutzer spricht oder schreibt einfach los.
 
 ---
 
-## Wenn "Einfach loslegen" gewählt wird
+## Wenn der Nutzer losspricht
 
-"Gut. Ich lerne dich über die Zeit kennen."
+Am Anfang muss nichts definiert werden. Zum Beispiel:
 
-*— Bubble beruhigt sich — Hauptscreen erscheint —*
+- "Du bist meine Companion-App."
+- "Du sollst mein Leben strukturieren."
+- "Ich habe ein Privatleben-Problem, kannst du mir helfen?"
 
----
+ORIENT zieht sich die Informationen selbst heraus,
+deutet kurz an, dass es noch mehr kann,
+und fängt dort an, wo der Nutzer es braucht.
 
-## Wenn "Kurz einrichten" gewählt wird
+Danach hört ORIENT still zu und fragt nur bei Unklarheit kurz nach.
+Je mehr Input der Nutzer gibt, desto klarer und schneller entwickelt sich die KI.
 
-"Wie soll ich heißen?"
-
-*— Eingabefeld erscheint —*
-
-Nach dem Namen:
-"Schön. Was interessiert dich?"
-
-*— Interessens-Inseln erscheinen —*
-
-Nach mindestens einer Auswahl:
-"Gut. Das reicht für den Anfang.
-Alles andere lerne ich über die Zeit."
-
-*— Hauptscreen erscheint —*
+Die Rolle kommt vom Nutzer, nicht von ORIENT.
+Es gibt keinen eigenen Onboarding-Schritt: Das Onboarding ist das erste Zuhören.
 
 ---
 
-## Wenn "Jetzt kennenlernen" gewählt wird
+## Der Name
 
-"Wie soll ich heißen?"
-
-*— Nach dem Namen: —*
-
-"[Name]. Schön.
-Bist du eher jemand der viel erzählt —
-oder der lieber fragt?"
-
-*— Zwei Optionen: "Ich erzähle viel" / "Ich höre lieber zu" —*
-
-*— Nach der Wahl: —*
-
-"Was beschäftigt dich gerade am meisten?
-Beruf, Ideen, Menschen, die Welt —
-einfach was dir in den Sinn kommt."
-
-*— Voice Button erscheint — einladen zu sprechen —*
-
-*— Nach der Eingabe: —*
-
-"Ich hab's.
-Wir fangen an."
-
-*— Hauptscreen erscheint —*
+Es gibt keine Frage "Wie soll ich heißen?".
+Der Name entsteht im Gespräch.
 
 ---
 
@@ -109,16 +73,23 @@ Der erste Satz ist nie:
 "Willkommen bei ORIENT!"
 "Ich bin dein KI-Assistent!"
 "Lass uns beginnen!"
+"Hallo. Ich bin da."
 
 Der erste Satz ist immer:
 
-*"Hallo. Ich bin da."*
+*"Ich … ich … ich bin."*
 
 Ruhig. Warm. Ohne Übertreibung.
-Wie jemand der zur Tür hereinkommt
-und einfach da ist.
+Wie jemand, der gerade die Augen aufschlägt.
 
 ---
 
-*ORIENT — Der erste Satz v0.1*
-*Zwei Worte. Alles drin.*
+## Noch offen
+
+- Der Name von ORIENT (früherer Arbeitsname: Neona)
+- Der Ton (tiefer warmer Ton beim "bin")
+- Die spätere Stimme
+
+---
+
+*ORIENT — Der erste Satz v0.2*

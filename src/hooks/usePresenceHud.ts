@@ -35,15 +35,31 @@ export function usePresenceHud(selectedThreadId: string | null, refreshKey = 0) 
         hintBudgetRemaining: ctx.hintBudgetPerDay ?? 3,
       };
 
+      const allImpulses = await impulseRepo.getAll();
+      const unlinkedCount = allImpulses.filter((i) => (i.links?.threadIds?.length ?? 0) === 0).length;
+
       const focus = selectedThreadId
         ? await threadQuery.getThreadSnapshot(selectedThreadId, opts)
         : null;
 
+      if (!alive) return;
+
+      // Unverknüpfte Gedanken haben Vorrang — HUD ist nicht „das oberste Thema“.
+      if (!selectedThreadId && unlinkedCount > 0) {
+        setHud({
+          title: 'Sammelcontainer',
+          escalationLevel: EscalationLevel.OBSERVE,
+          escalationReason: `${unlinkedCount} Gedanke${unlinkedCount === 1 ? '' : 'n'} warten auf Zuordnung — unten „Alle Themen neu prüfen“ oder neue ähnliche Impulse.`,
+          uncertainties: [],
+          hasFocus: false,
+          visible: true,
+        });
+        return;
+      }
+
       const daily = await dailyQuery.getDailyView(opts);
       const top = daily.items[0] ?? null;
       const snap = focus ?? top;
-
-      if (!alive) return;
 
       if (!snap) {
         const recent = await impulseRepo.findRecent(8);
@@ -65,6 +81,10 @@ export function usePresenceHud(selectedThreadId: string | null, refreshKey = 0) 
       let uncertainties = snap.uncertainties.slice(0, 2);
       let reason = snap.escalation.reason;
       const visible = shouldShowHud(snap.escalation.level, uncertainties.length, Boolean(focus));
+
+      if (!focus && top) {
+        reason = `Schwerpunkt unter deinen Themen (nicht der Sammelcontainer): ${reason}`;
+      }
 
       setHud({
         title: snap.title,
@@ -88,6 +108,9 @@ export function usePresenceHud(selectedThreadId: string | null, refreshKey = 0) 
         if (!alive) return;
         reason = enriched.summary;
         if (enriched.uncertainties.length) uncertainties = enriched.uncertainties;
+        if (!focus && top) {
+          reason = `Schwerpunkt: ${reason}`;
+        }
         setHud({
           title: snap.title,
           escalationLevel: snap.escalation.level,

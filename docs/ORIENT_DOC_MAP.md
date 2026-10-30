@@ -13,6 +13,7 @@
 | **ORIENT_KONZEPT.md** | Gesamtkonzept: Produkt + Verhalten + Phase 1 + Roadmap |
 | **ORIENT_DNA.md** | Unveränderliche Grundhaltung (Constraint für alles) |
 | **ORIENT_Gesetze.md** | 13 Gesetze — rechtlich/ethisch bindend für Verhalten |
+| **ORIENT_Spezifikation_v2.md** | Entscheidungen zu Erwachen, Gedächtnis, Fähigkeiten, Sicherheit, Werte, Muster. Wo sie vom Konzept abweicht, gilt die Spezifikation, das Konzept wird daraus nachgezogen |
 
 ---
 
@@ -22,11 +23,9 @@
 |----------|--------|------------------------|
 | ORIENT_Manifest.md | Kern, drei Sphären, ein Tag | Kap. 3, 4 |
 | ORIENT_Vision.md | 7 Dimensionen, Horizont | Kap. 9 |
-| ORIENT_Komplett.md | Kurzüberblick für Mitstreiter | Executive Summary; bei Konflikt → KONZEPT |
 | ORIENT_Stimme.md | Ton, Situationen, Modi | Kap. 4.4 |
 | ORIENT_SystemPrompt.md | API System-Prompt + Platzhalter | Implementierung Stimme |
-| ORIENT_ErsterSatz.md | Wortwörtliches Onboarding-Copy | Kap. 4.5 |
-| ORIENT_Onboarding.md | 4 Wege, Wake Word, Lebenszeichen-Konzept | Kap. 4.5 |
+| ORIENT_ErsterSatz.md | Das Erwachen, wortwörtlich | Kap. 4.5 |
 | ORIENT_DesignSystem.md | Farben, Typo, Animation, Verbote | Kap. 6.4 |
 | ORIENT_DELTA07_BEHAVIOR_PRESENCE.md | Präsenz, Kugel, 3 Ebenen — **Code-Referenz** | Kap. 4.1–4.2 |
 
@@ -50,11 +49,10 @@
 | Dokument | Inhalt | Status |
 |----------|--------|--------|
 | **ORIENT_ARCHITECTURE.md** | PWA, SQLite, Schichten — **bindend Phase 1** | Kanonisch Tech |
-| ORIENT_TODO_PHASE1.md | 11 Prioritäten | Kanonisch Scope |
+| ORIENT_TODO_PHASE1.md | 11 Prioritäten, Status, Handoff, Cursor-Schritte | Kanonisch Scope und Status |
 | ORIENT_DEVELOPMENT_TASKS.md | Tasks A1–D11 detailliert | Umsetzung |
 | ORIENT_REPO_STRUCTURE.md | Ordnerstruktur | Implementierung |
 | ORIENT_COMPONENT_OVERVIEW.md | Komponenten | Implementierung |
-| ORIENT_STATUS_PHASE1.md | Fortschritt | Living doc |
 | ORIENT_VISUAL_INTERACTION.md | Visual-Spezifikation | C8 |
 | ORIENT_VISUAL_PROTOTYPE_NOTES.md | Prototyp-Notizen | Referenz |
 
@@ -88,14 +86,14 @@
 
 ---
 
-## Bekannte Dubletten (bewusst)
+## Bewusst zwei Dateien
 
 | Thema | Docs | Kanonisch |
 |-------|------|-----------|
-| Architektur | ARCHITECTURE vs. Architektur | Phase 1: **ARCHITECTURE** |
-| Gesamtbild | Komplett vs. KONZEPT | **KONZEPT** |
+| Architektur | ARCHITECTURE vs. Architektur | Phase 1: **ARCHITECTURE**. Architektur = Zielbild ab v2 |
 | Verhalten | Verhalten vs. DELTA07 vs. SYSTEMLOGIC | Verhalten = Vision; DELTA07 = messbar; SYSTEMLOGIC = Daten |
-| Onboarding „3 Wege“ | Onboarding, Komplett | **4 Wege** (inkl. natürlich sprechen) |
+
+Alle anderen Dubletten sind entfernt: Komplett, Onboarding, ToDo, TODO.md, STATUS_PHASE1 und die älteren Kopien im Orient-Ordner. Es gibt je Thema genau eine Datei.
 
 ---
 
@@ -109,4 +107,4 @@ Neue Docs oder große Änderungen:
 
 ---
 
-*ORIENT — Dokumenten-Karte v1.0*
+*ORIENT — Dokumenten-Karte v1.1*

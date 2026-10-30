@@ -266,6 +266,46 @@ export function findThreadByExactTitle(threads: Thread[], title: string): Thread
   return threads.find((t) => normalizeTopicText(t.title) === want && isMatchableThread(t)) ?? null;
 }
 
+/** 0..1 — Überlappung der Titel-Wörter (inkl. Stamm). */
+export function titleSimilarity(a: string, b: string): number {
+  const ta = topicTokens(a).filter((t) => t.length >= 3).map(germanStem);
+  const tb = topicTokens(b).filter((t) => t.length >= 3).map(germanStem);
+  if (ta.length === 0 || tb.length === 0) return 0;
+
+  let overlap = 0;
+  for (const sa of ta) {
+    if (tb.some((sb) => stemsMatch(sa, sb))) overlap++;
+  }
+  return overlap / Math.max(ta.length, tb.length);
+}
+
+/** Verhindert doppelte Themen („Arbeit“ vs. „Arbeiten“). */
+export function findThreadBySimilarTitle(
+  threads: Thread[],
+  title: string,
+  minSimilarity = 0.72,
+): Thread | null {
+  const exact = findThreadByExactTitle(threads, title);
+  if (exact) return exact;
+
+  const normTitle = normalizeTopicText(title);
+  let best: Thread | null = null;
+  let bestSim = minSimilarity;
+
+  for (const thread of threads.filter(isMatchableThread)) {
+    const normExisting = normalizeTopicText(thread.title);
+    if (normTitle.length >= 4 && normExisting.includes(normTitle)) return thread;
+    if (normExisting.length >= 4 && normTitle.includes(normExisting)) return thread;
+
+    const sim = titleSimilarity(thread.title, title);
+    if (sim > bestSim) {
+      bestSim = sim;
+      best = thread;
+    }
+  }
+  return best;
+}
+
 export type TopicCluster = {
   title: string;
   signature: string;
@@ -298,6 +338,45 @@ function clusterByExactTitle(unlinked: Impulse[]): TopicCluster | null {
     }
   }
   return best;
+}
+
+function clusterBySharedBigrams(unlinked: Impulse[]): TopicCluster | null {
+  const freq = new Map<string, number>();
+  const bigramsByImpulse = new Map<string, string[]>();
+
+  for (const imp of unlinked) {
+    const tokens = significantTokens(impulseText(imp));
+    const bigrams: string[] = [];
+    for (let i = 0; i < tokens.length - 1; i++) {
+      bigrams.push(`${tokens[i]} ${tokens[i + 1]}`);
+    }
+    bigramsByImpulse.set(imp.id, bigrams);
+    for (const bg of new Set(bigrams)) {
+      freq.set(bg, (freq.get(bg) ?? 0) + 1);
+    }
+  }
+
+  const shared = [...freq.entries()]
+    .filter(([, c]) => c >= 2)
+    .sort((a, b) => b[1] - a[1] || b[0].length - a[0].length);
+
+  if (shared.length === 0) return null;
+
+  const anchor = shared[0]![0];
+  const matched = unlinked.filter((imp) => bigramsByImpulse.get(imp.id)?.includes(anchor));
+  const unique = dedupeImpulses(matched);
+  if (unique.length < 2) return null;
+
+  const title = anchor
+    .split(' ')
+    .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+    .join(' ');
+
+  return {
+    title,
+    signature: `bigram:${anchor}`,
+    impulses: unique,
+  };
 }
 
 function clusterBySharedTokens(unlinked: Impulse[]): TopicCluster | null {
@@ -391,6 +470,7 @@ export function detectTopicCluster(unlinked: Impulse[]): TopicCluster | null {
   if (unlinked.length < 2) return null;
   return (
     clusterByExactTitle(unlinked) ??
+    clusterBySharedBigrams(unlinked) ??
     clusterBySharedTokens(unlinked) ??
     clusterByKeywordToken(unlinked)
   );
@@ -405,9 +485,9 @@ export const CAPTURE_MATCH_OPTIONS: ThreadMatchOptions = {
 
 /** Auto-Topic: etwas großzügiger, Engine korrigiert später. */
 export const AUTO_LINK_MATCH_OPTIONS: ThreadMatchOptions = {
-  minScore: 4,
-  minMargin: 2,
-  minAbsoluteForAmbiguity: 7,
+  minScore: 3,
+  minMargin: 1,
+  minAbsoluteForAmbiguity: 6,
 };
 
 export const WEAK_ASSIGNMENT_SCORE = 5;

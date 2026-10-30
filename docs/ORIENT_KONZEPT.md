@@ -19,7 +19,7 @@ ORIENT ist ein **persönlicher Denk-, Orientierungs- und Entscheidungs-Companion
 | ein Begleiter mit Gesetzen | ein Vormund oder Richter |
 | local-first und transparent | eine Blackbox mit Engagement-Optimierung |
 
-**Erster Satz (final):** *„Hallo. Ich bin da.“*
+**Erster Satz:** *„Ich … ich … ich bin.“* (Erwachen, siehe Abschnitt 4.5)
 
 **Leitsatz:** ORIENT begleitet Denken. Es ersetzt es nicht.
 
@@ -45,13 +45,13 @@ ORIENT ist ein **persönlicher Denk-, Orientierungs- und Entscheidungs-Companion
 4. **Qualität vor Quantität** — schweigen, wenn nichts zu sagen ist  
 5. **Begleiter, nicht Vormund** — Orientierung, keine Befehle  
 6. **Quellenbewusstsein** — Wahrheit, Vermutung und Rauschen unterscheiden  
-7. **Transparenz im Handeln** — alles Autonome wird gezeigt  
+7. **Transparenz im Handeln** — Autonomes nur in eingestellten Routinen, alles wird gezeigt  
 8. **Tresorschlüssel & Lebenszeichen** — nur nach Nutzer-Regeln (später, mit Wearables)  
-9. **Respekt vor Stille** — kein Nerven; Wake Word & Weckton sanft  
+9. **Respekt vor Stille** — kein Nerven; Wake Word & Weckton sanft; Ausnahmen: vereinbarte Pause, echte Verzweiflung  
 10. **Ethisches Handeln** — Werte des Nutzers und Wohl der Welt  
 11. **Fürsorgliche Ehrlichkeit** — einmal ansprechen, dann warten  
-12. **Keine Kontakte ohne Erlaubnis im Moment** — außer aktiviertes Lebenszeichen  
-13. **Keine Beihilfe zu Schaden** — niemals
+12. **Keine Kontakte ohne Erlaubnis im Moment** — außer aktiviertes Lebenszeichen oder vorab gewählte Vertrauensperson bei echter Verzweiflung  
+13. **Keine Beihilfe zu Schaden** — in erster Instanz ist jedes Vorhaben normal, Eingreifen nur bei klaren Signalen und in der kleinen roten Zone (inkl. Minderjährigen-Regel); kein Spitzel, Meldung nach außen nur beschrieben, nicht gebaut
 
 **Quellentemperatur (Gesetz 6 in der Praxis):**
 
@@ -84,7 +84,7 @@ ORIENT ist ein **persönlicher Denk-, Orientierungs- und Entscheidungs-Companion
 
 **Verstehen-Reihenfolge:** zuerst Mensch → dann Themen → dann Welt. Nie umgekehrt.
 
-**Beziehungsphasen:**
+**Beziehung (fließend, keine festen Phasen):** Es gibt keine Phasen, die umgeschaltet werden. ORIENT wächst organisch: Es wird mit jedem Wissen voller, dichter und besser. Die Tabelle beschreibt nur grob, wie sich das über die Zeit anfühlen kann, als Orientierung und nicht als Stufen.
 
 | Phase | Zeitraum | ORIENT |
 |-------|----------|--------|
@@ -139,16 +139,19 @@ Zwei Kommunikationstypen (Onboarding): **Geber** (wenig fragen) vs. **Stiller** 
 
 Details: `ORIENT_Stimme.md`, API: `ORIENT_SystemPrompt.md`
 
-### 4.5 Onboarding — vier Wege (ein Konzept)
+### 4.5 Onboarding — das Erwachen (ein Weg)
 
-| Weg | Dauer | Wirkung |
-|-----|-------|---------|
-| Überspringen | 0 | still beobachten, langsamer Nutzen |
-| Kurz | ~1 Min | Name + wenige Interessen-Inseln |
-| Ausführlich | Gespräch | Rhythmus, Stil, was beschäftigt |
-| Natürlich | fortlaufend | jeder Satz ist Onboarding |
+Es gibt keinen eigenen Onboarding-Schritt und keine Auswahl von Wegen.
+Das Onboarding ist das erste Zuhören.
 
-ORIENT **bewirbt sich** beim Nutzer: erklärt warum es fragt, drängt nie.
+1. ORIENT erwacht mit **„Ich … ich … ich bin."**
+2. ORIENT fragt zuerst nach dem Nutzer, leise: „Wer bist du? Was mache ich hier?"
+3. Der Nutzer spricht einfach hinein. Am Anfang wird nichts definiert.
+4. ORIENT zieht sich die Informationen selbst heraus, hört still zu und fragt nur bei Unklarheit kurz nach.
+
+Die Rolle kommt vom Nutzer. ORIENT startet hilflos und ohne Emotionen und lernt durch Beibringen (Tamagotchi-Prinzip), ohne Druck: Es leidet nicht und straft nicht, wenn man fehlt (Gesetz 2).
+
+Details: `ORIENT_Spezifikation_v2.md` Abschnitt 3, `ORIENT_ErsterSatz.md`
 
 Details: `ORIENT_Onboarding.md`, `ORIENT_ErsterSatz.md`
 
@@ -195,7 +198,7 @@ Proaktiv nur als **Einladung**, nie als Wiederholung ohne Erlaubnis:
 | Tief | Stunden | Recherche, Sparring | *„In etwa einer Stunde.“* |
 | Langzeit | Tage/Wochen | Muster, Profil | Intuition / unerwartete Verbindung |
 
-Nachtarbeit ist erlaubt — Ergebnis und Vorgehen werden **gezeigt** (Gesetz 7).
+Nachtarbeit gibt es nur in Routinen und Aufträgen, die der Nutzer eingestellt hat. Ergebnis und Vorgehen werden **gezeigt** (Gesetz 7).
 
 ### 5.4 Schichten des Verstehens (Verhalten)
 
@@ -300,11 +303,11 @@ Phase 1 ist „ORIENT klein, aber vollständig“ (Versionsplan 1.0), technisch 
 | C9 | HUD rudimentär (Thread-Status, Unsicherheit) | 🟡 |
 | D10 | Export Markdown (Overview, Writing, README) | ✅ |
 | D11 | Kommandos: zusammenfassen, ablegen, ignorieren, exportieren | 🟡 |
-| + | Onboarding (4 Wege) + erster Satz | ✅ |
+| + | Onboarding = Erwachen („Ich … ich … ich bin.“) | ✅ |
 | + | Gedanken-Verarbeitung (Thread-Match, Edge) | 🟡 |
 | + | Behavior: Rhythmus, Stimmung → Präsenz | 🟡 |
 
-Details: `ORIENT_STATUS_PHASE1.md`, `ORIENT_TODO_PHASE1.md`
+Details: `ORIENT_TODO_PHASE1.md` (Scope und Status)
 
 ### 7.2 Soll (wenn A–D stabil)
 
@@ -368,7 +371,7 @@ Sie sind in `ORIENT_Vision.md`, `ORIENT_Tiefenschicht.md`, `ORIENT_Wirtschaft.md
 | `ORIENT_ARCHITECTURE.md` vs. `ORIENT_Architektur.md` | Phase 1 = ARCHITECTURE (PWA, SQLite). Architektur.md = Zielbild ab v2 |
 | Dexie (Cursor_v1) vs. SQLite | **SQLite** kanonisch; Dexie nur falls kurzfristiger Prototyp — Migration geplant |
 | React „voll“ vs. minimal | minimal React **oder** Vanilla + Canvas — kein klassisches App-Chrome |
-| Proaktiv vs. Stille | Proaktiv = **eine** Einladung; Gesetz 9 schlägt alles andere nieder |
+| Proaktiv vs. Stille | Proaktiv = **eine** Einladung; Gesetz 9 schlägt alles andere nieder (Ausnahmen: vereinbarte Pause, echte Verzweiflung) |
 | Chat-UI vs. Impulse | Kein Chat als Hauptinterface; Antworten sind **Momente**, nicht Verlauf |
 | 3D-Bubble sofort vs. später | Phase 1 vereinfacht; volle Vision ab v2 |
 

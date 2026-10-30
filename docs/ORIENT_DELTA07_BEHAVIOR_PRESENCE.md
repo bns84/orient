@@ -104,6 +104,8 @@ Nicht Symbol, nicht Button.
 5. **keine Historie**
 6. **kein Transkript**
 
+> **Gilt für die Hauptansicht.** Der Nutzer sieht dort keine Liste dessen, was er gesagt hat. Auf ausdrücklichen Wunsch darf ORIENT Aufnahmen, Texte und Zusammenfassungen zeigen oder bereitstellen (Spezifikation v2, Abschnitt 7.1 und 6).
+
 **Sprache verändert:**
 - Themengewichtung
 - Tiefe

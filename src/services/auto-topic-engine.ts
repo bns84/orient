@@ -17,10 +17,12 @@ import {
   detectTopicCluster,
   findBestThreadMatch,
   findThreadByExactTitle,
+  findThreadBySimilarTitle,
   REASSIGN_MARGIN,
   REASSIGN_MIN_BEST,
   scoreThreadMatch,
   significantTokens,
+  titleSimilarity,
   type TopicCluster,
   WEAK_ASSIGNMENT_SCORE,
 } from './topic-matching';
@@ -44,12 +46,23 @@ export type AutoTopicResult = {
   threadsCreated: number;
   impulsesLinked: number;
   impulsesReassigned: number;
+  threadsConsolidated: number;
   lastThreadId?: string;
   lastThreadTitle?: string;
 };
 
+function normalizeImpulse(impulse: Impulse): Impulse {
+  const threadIds = impulse.links?.threadIds ?? [];
+  const entityIds = impulse.links?.entityIds ?? [];
+  return {
+    ...impulse,
+    links: { threadIds, entityIds },
+    meta: impulse.meta ?? { pinned: false },
+  };
+}
+
 function isUnlinked(impulse: Impulse): boolean {
-  return impulse.links.threadIds.length === 0;
+  return normalizeImpulse(impulse).links.threadIds.length === 0;
 }
 
 async function loadImpulsesForRun(
@@ -58,9 +71,10 @@ async function loadImpulsesForRun(
 ): Promise<Impulse[]> {
   if (scope === 'full') {
     const all = await deps.impulseRepo.getAll();
-    return all.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+    return all.map(normalizeImpulse).sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
   }
-  return deps.impulseRepo.findRecent(RECENT_LIMIT);
+  const recent = await deps.impulseRepo.findRecent(RECENT_LIMIT);
+  return recent.map(normalizeImpulse);
 }
 
 async function ensureEdge(deps: ThoughtProcessorDeps, impulseId: string, threadId: string, at: Date) {
@@ -155,7 +169,7 @@ async function createThreadFromCluster(
   threads: Thread[],
 ): Promise<Thread> {
   const at = new Date();
-  const existing = findThreadByExactTitle(threads, cluster.title);
+  const existing = findThreadBySimilarTitle(threads, cluster.title);
   if (existing) return existing;
 
   const corpus = [
@@ -191,6 +205,39 @@ async function createThreadFromCluster(
   return thread;
 }
 
+const CONSOLIDATE_TITLE_SIM = 0.88;
+
+/** Doppelte Themen zusammenführen (Impulse → älteres Thema, Duplikat OBSERVED). */
+async function consolidateSimilarThreads(
+  deps: AutoTopicDeps,
+  threads: Thread[],
+): Promise<number> {
+  const active = threads.filter((t) => t.status === ThreadStatus.ACTIVE);
+  let consolidated = 0;
+
+  for (let i = 0; i < active.length; i++) {
+    for (let j = i + 1; j < active.length; j++) {
+      const keeper = active[i]!;
+      const duplicate = active[j]!;
+      if (duplicate.status !== ThreadStatus.ACTIVE) continue;
+      if (titleSimilarity(keeper.title, duplicate.title) < CONSOLIDATE_TITLE_SIM) continue;
+
+      const linked = await deps.impulseRepo.findByThread(duplicate.id);
+      for (const imp of linked) {
+        await linkImpulseToThread(deps, imp, keeper.id, threads);
+      }
+
+      await deps.threadRepo.update({
+        ...duplicate,
+        status: ThreadStatus.OBSERVED,
+        updatedAt: new Date(),
+      });
+      consolidated++;
+    }
+  }
+  return consolidated;
+}
+
 function shouldReassign(
   currentScore: number,
   bestScore: number,
@@ -215,6 +262,7 @@ export async function runAutoTopicEngine(
     threadsCreated: 0,
     impulsesLinked: 0,
     impulsesReassigned: 0,
+    threadsConsolidated: 0,
   };
 
   let threads = await loadAllThreads(deps.threadRepo);
@@ -284,12 +332,18 @@ export async function runAutoTopicEngine(
   }
 
   threads = await loadAllThreads(deps.threadRepo);
+  if (scope === 'full') {
+    result.threadsConsolidated = await consolidateSimilarThreads(deps, threads);
+    threads = await loadAllThreads(deps.threadRepo);
+  }
+
   const regionTagsBackfilled = await backfillThreadRegionTags(deps, threads);
 
   if (
     result.threadsCreated > 0 ||
     result.impulsesLinked > 0 ||
     result.impulsesReassigned > 0 ||
+    result.threadsConsolidated > 0 ||
     regionTagsBackfilled > 0
   ) {
     await logEvent('autoTopic.reconcile', {
@@ -297,6 +351,7 @@ export async function runAutoTopicEngine(
       created: result.threadsCreated,
       linked: result.impulsesLinked,
       reassigned: result.impulsesReassigned,
+      consolidated: result.threadsConsolidated,
       regionTagsBackfilled,
     });
   }

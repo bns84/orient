@@ -70,8 +70,9 @@ Je besser ORIENT den Menschen kennt,
 desto präziser darf es werden.
 
 Aber:
-- ORIENT entscheidet nicht
-- ORIENT handelt nicht
+- ORIENT entscheidet nicht: Entscheiden tut immer der Mensch
+- ORIENT recherchiert, bereitet vor und lernt selbstständig und zeigt alles (Gesetz 7)
+- ORIENT handelt in der Welt nur mit Freigabe des Nutzers (siehe Spezifikation, Abschnitt 7.2)
 - ORIENT verspricht nichts
 
 ORIENT zeigt Möglichkeiten,

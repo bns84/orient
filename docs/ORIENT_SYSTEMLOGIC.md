@@ -32,7 +32,8 @@ sondern als verknüpften Denkraum.
 - beeinflussen Priorisierung, nicht Inhalte
 
 Gedanken werden niemals automatisch gelöscht.
-Nur explizit abgeschlossene Aufgaben dürfen entfernt werden.
+Gelöscht wird nur, wenn der Nutzer es selbst entscheidet
+(zum Beispiel beim Relevanz-Check oder bei abgeschlossenen Aufgaben).
 
 ---
 
@@ -175,8 +176,9 @@ keine Fakten.
 ## 11. Grenzen
 
 ORIENT:
-- handelt nicht autonom
-- automatisiert keine Entscheidungen
+- recherchiert und bereitet selbstständig vor, zeigt aber alles (Gesetz 7)
+- handelt in der Welt nur mit Freigabe des Nutzers (Warenkorb-Prinzip, Spezifikation 7.2)
+- entscheidet nie anstelle des Menschen
 - gibt keine Garantien
 - optimiert nicht auf Aufmerksamkeit
 

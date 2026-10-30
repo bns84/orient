@@ -1,6 +1,6 @@
 # ORIENT — TODO Phase 1
 
-**Stand:** 2026-05-17 · Commit `8685ec3` · Branch `cursor/phase1-sqlite-onboarding-pwa`
+**Stand:** 2026-05-17 · Commit `8685ec3` · Branch `cursor/phase1-sqlite-onboarding-pwa` · Geschätzter Fortschritt ~92 %
 
 Ziel: Ein funktionierender, ruhiger ORIENT-Core (Denken, Gedächtnis, Beziehung) — ohne Feature-Explosion.
 
@@ -43,6 +43,7 @@ Details 8:
 - ✅ `OrientBubble` (R3F, Bloom, `presence`, `bubbleKnowledge`)
 - ✅ Hauptscreen: Bubble zentral ~60 %, Swipes (`HomeScreen`, Schritt 12)
 - 🟡 Bubble-Animation / weiteres Feintuning pausiert
+- Voice: kein TTS, Firefox ohne Web Speech
 
 Details 9:
 
@@ -76,7 +77,7 @@ Details 11: `commands.ts` + Voice/Text ✅; Randfälle / mehr Phrasen optional.
 | Morgenroutine + Abendritual UI | ✅ |
 | Share entfernt (v3.0 Sprache) | ✅ |
 | `useAppStore` | ✅ |
-| `useThreadsStore` / `useImpulsesStore` | ⬜ |
+| `useThreadsStore` / `useImpulsesStore` | 🟡 Dateien vorhanden, aber noch nirgends eingebunden |
 | Vitest (topic-matching, auto-topic, rituals, commands, …) | ✅ |
 | KI-Stub (`VITE_AI_ENABLED`, `services/ai/`) | 🟡 |
 
@@ -97,9 +98,43 @@ Details 11: `commands.ts` + Voice/Text ✅; Randfälle / mehr Phrasen optional.
 
 1. 🟡 **Themen-Einordnung** — reale Daten, Matcher/Cluster nachjustieren
 2. 🟡 **Kontext ↔ Visual** — Feintuning
-3. ⬜ Optional: `useThreadsStore` / `useImpulsesStore`
+3. 🟡 Optional: `useThreadsStore` / `useImpulsesStore` einbinden
 4. ⬜ Playwright E2E (optional)
 
 Phase 1 „fertig“ wenn: offline stabil, Sammelcontainer, Auto-Themen, Briefings, Voice+Text, Context, Export — **ruhig und vertrauenswürdig**.
 
-Siehe [`ORIENT_STATUS_PHASE1.md`](./ORIENT_STATUS_PHASE1.md) · [`ORIENT_Cursor_v1.md`](./ORIENT_Cursor_v1.md)
+---
+
+## Handoff — letzte größere Änderungen
+
+1. **Hauptscreen** (`HomeScreen`): Bubble zentral, Swipes (Themen/Sammlung), Voice unten.
+2. **Auto-Topic:** `topic-matching.ts` (Clustering, strengeres Erfassen), Vollabgleich alle 6 h.
+3. **Rituale:** Morgenbriefing + Abendritual (einmal/Tag, kein Zwang).
+4. **HUD + Kommandos:** `PresenceHud`, `commands.ts` (Voice/Text).
+5. **Bubble:** Wissen aus Impulsen/Threads (`useBubbleKnowledge`); weiteres Tuning pausiert.
+
+**Wichtige Dateien:** `HomeScreen.tsx`, `auto-topic-engine.ts`, `topic-matching.ts`, `thought-processor.ts`, `commands.ts`, `CollectionInbox.tsx`
+
+**Geschätzte Restzeit Phase 1:** ~4–6 h (Feinschliff, kein neues Großfeature)
+
+---
+
+## Cursor-Arbeitsplan (Schritte 1–13)
+
+| Schritt | Thema | Status |
+|---------|--------|--------|
+| 1 | PWA | ✅ |
+| 2 | SQLite & Repositories | ✅ |
+| 3 | Verschlüsselung | ✅ |
+| 4 | Lifecycle & Graph | ✅ |
+| 5 | Zustand Stores | 🟡 |
+| 6 | Präsenz-Bubble | ✅ |
+| 7 | Sprache → Impulse | ✅ |
+| 8 | Auto-Topic-Engine | ✅ 🟡 |
+| 9 | Gedanken-Verarbeitung | ✅ 🟡 |
+| 10 | Onboarding = Erwachen (kein Formular, erster Satz wird erster Impuls) | ✅ |
+| 11 | Morgenroutine UI | ✅ |
+| 12 | Hauptscreen-Layout | ✅ |
+| 13 | Abendritual + Commands | ✅ 🟡 |
+
+Details: [`ORIENT_Cursor_v1.md`](./ORIENT_Cursor_v1.md)

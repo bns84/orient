@@ -4,7 +4,7 @@
 
 import { kvGet, kvSet } from '../db/kv';
 
-export type OnboardingPath = 'skip' | 'short' | 'deep';
+export type OnboardingPath = 'skip' | 'short' | 'deep' | 'awakening';
 export type CommunicationStyle = 'active' | 'passive';
 
 export type OnboardingProfile = {

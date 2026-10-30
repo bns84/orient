@@ -263,31 +263,9 @@ regelbasiert oder KI wenn enabled. Kein Fehler-Toast bei API-Ausfall.
 
 ---
 
-## Schritt 10 — Onboarding (minimal)
+## Schritt 10 — Onboarding (Erwachen)
 
-**Status im Repo:** ✅ Erledigt — `OnboardingFlow`: Companion-Name + Kommunikationsstil (aktiv/passiv). **Keine** Interessen-/Themen-Auswahl.
-
-**Cursor Prompt:**
-```
-src/pages/Onboarding/
-
-Screen 0 — nach 2s Stille:
-"Hallo. Ich bin da." + kurze Companion-Erklärung (ORIENT_ErsterSatz.md).
-
-Wege:
-[ Einfach loslegen ]  → sofort fertig, ORIENT lernt aus Nutzung
-[ Kurz einrichten ]   → Companion-Name → Kommunikationsstil (aktiv/passiv) → fertig
-
-ENTFERNT in v1.0:
-- Interessen-Inseln / Themen-Tags
-- Manuelle Thread-Anlage im Onboarding
-- Erster-Gedanke-Screen als Pflicht
-
-Kommunikationstyp → profile (active/passive) für Behavior.
-Themen nur über Auto-Topic-Engine (Schritt 8).
-
-Kein "Willkommen bei ORIENT!" — siehe ORIENT_ErsterSatz.md
-```
+**Status im Repo:** ✅ Erledigt und umgestellt am 29.10.2026. Das frühere Onboarding (Name + Kommunikationsstil, „Hallo. Ich bin da.") ist ersetzt durch das Erwachen: „Ich … ich … ich bin.", danach die leise Frage „Wer bist du? Was mache ich hier?". Der erste Satz des Nutzers wird der erste Impuls. Die Beschreibung steht in `ORIENT_Spezifikation_v2.md` Abschnitt 3 und in `ORIENT_ErsterSatz.md`. Code: `src/pages/Onboarding/OnboardingFlow.tsx`.
 
 ---
 
@@ -367,7 +345,7 @@ Siehe ORIENT_EXPORT_FORMATS.md und ORIENT_TODO_PHASE1 Task D10/D11.
 **Checkliste:**
 
 - [x] PWA offline nutzbar
-- [x] Onboarding: „Hallo. Ich bin da.“ + Name/Stil (ohne Themen-Auswahl)
+- [x] Onboarding: Erwachen („Ich … ich … ich bin.“, dann leise Frage nach dem Nutzer)
 - [x] Sammelcontainer + Auto-Topic-Engine (selbstlernend, nachträgliche Zuordnung)
 - [x] Bubble reagiert auf presence
 - [x] Voice → Impulse in SQLite (verschlüsselt)

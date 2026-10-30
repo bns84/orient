@@ -74,8 +74,24 @@ Das ist seine stärkste Qualität.
 *An einem freien Tag:*
 "Guten Morgen. Kein Stress heute."
 
+*Montag nach einem langen Sonntag:*
+"Guten Morgen. Sachte."
+
 *Wenn etwas Wichtiges passiert ist:*
 "Guten Morgen. Ich muss dir was zeigen. Hast du kurz?"
+
+### Wecken ist einstellbar
+
+Es gibt einen Standard: ein sanfter Weckton (Vogelgezwitscher, Naturgeräusch, Akkord oder Stille mit Vibration), danach eine Stimme, die dich kennt, mit einem der Morgensätze oben.
+
+Alles davon lässt sich jederzeit ändern. Der Nutzer kann es sagen, zum Beispiel: „Weck mich morgens damit." Oder ORIENT findet es im Kennenlernen heraus. Beispiele:
+— Aufmunternd: „Guten Morgen, heute ist ein toller Tag."
+— Antreibend: „Aufstehen, beweg dich."
+— Nur: „Guten Morgen."
+— Nur ein Klang, kein Wort.
+— Gar nicht wecken.
+
+Das ist das Grundprinzip der Stimme: Es gibt immer einen Standard, aber alles lässt sich nachjustieren, bis es sich für diesen einen Menschen richtig anfühlt.
 
 ---
 
@@ -201,6 +217,14 @@ Eigenes Wort. Eigener Name. Eigenes Signal.
 
 Das Wort ist privat.
 Es gehört nur diesem Menschen und diesem Companion.
+
+Mögliche Formen:
+— Ein Name: John, Nova, Aria, Lena
+— Ein Wort: Hey, Hi, Yo, „Hey John"
+— Ein Signal: ein Ton, ein Schnipsen, ein Pfeifton
+— Gar nichts: einfach die Bubble drücken
+
+Auch der Name des Companions gehört dem Nutzer. Er entsteht im Gespräch (siehe Spezifikation, Abschnitt 3).
 
 ---
 

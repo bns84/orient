@@ -29,6 +29,11 @@ export interface ThreadRepository {
   update(thread: Thread): Promise<void>;
 
   /**
+   * Liefert alle Threads (vom Store genutzt)
+   */
+  getAll(): Promise<Thread[]>;
+
+  /**
    * Findet alle Threads (optional, für später)
    */
   findAll?(): Promise<Thread[]>;

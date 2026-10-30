@@ -5,6 +5,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAppServices } from '../ui/wiring/AppServicesContext';
 import type { Impulse } from '../core/impulses/Impulse';
+import type { AutoTopicResult } from '../services/auto-topic-engine';
+import { formatAutoTopicFeedback } from '../services/auto-topic-feedback';
 
 function preview(impulse: Impulse): string {
   return (
@@ -25,17 +27,25 @@ function formatWhen(d: Date): string {
 
 type Props = {
   refreshKey?: number;
+  onReconcileTopics?: () => Promise<AutoTopicResult>;
+  onReconcileDone?: () => void | Promise<void>;
 };
 
-export function CollectionInbox({ refreshKey = 0 }: Props) {
+export function CollectionInbox({
+  refreshKey = 0,
+  onReconcileTopics,
+  onReconcileDone,
+}: Props) {
   const { impulseRepo } = useAppServices();
   const [items, setItems] = useState<Impulse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reconciling, setReconciling] = useState(false);
+  const [reconcileNote, setReconcileNote] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
     try {
-      const recent = await impulseRepo.findRecent(24);
+      const recent = await impulseRepo.findRecent(48);
       setItems(recent);
     } finally {
       setLoading(false);
@@ -55,6 +65,39 @@ export function CollectionInbox({ refreshKey = 0 }: Props) {
         <div style={{ fontSize: 12, opacity: 0.6, marginTop: 4 }}>
           Alles landet hier — roh. ORIENT ordnet Themen selbst zu und sortiert im Laufe der Zeit nach.
         </div>
+        {onReconcileTopics ? (
+          <button
+            type="button"
+            disabled={reconciling}
+            onClick={() => {
+              setReconciling(true);
+              setReconcileNote(null);
+              void onReconcileTopics()
+                .then((result) => setReconcileNote(formatAutoTopicFeedback(result)))
+                .then(() => onReconcileDone?.())
+                .then(() => reload())
+                .finally(() => setReconciling(false));
+            }}
+            style={{
+              marginTop: 10,
+              fontSize: 12,
+              padding: '8px 12px',
+              borderRadius: 10,
+              border: '1px solid rgba(255,255,255,0.18)',
+              background: 'rgba(255,255,255,0.06)',
+              color: 'inherit',
+              cursor: reconciling ? 'wait' : 'pointer',
+              opacity: reconciling ? 0.6 : 1,
+            }}
+          >
+            {reconciling ? 'Prüfe Themen…' : 'Alle Themen neu prüfen'}
+          </button>
+        ) : null}
+        {reconcileNote ? (
+          <div style={{ fontSize: 11, opacity: 0.65, marginTop: 8, lineHeight: 1.4 }}>
+            {reconcileNote}
+          </div>
+        ) : null}
       </div>
 
       {loading && <div style={{ fontSize: 12, opacity: 0.55 }}>Lade…</div>}

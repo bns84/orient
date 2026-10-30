@@ -90,7 +90,7 @@ Unsicherheit wird nie versteckt. Immer gezeigt.
 
 Der Nutzer gibt ORIENT einen Namen, eine Firma, ein Ereignis.
 
-ORIENT beginnt selbstständig zu graben:
+ORIENT klärt kurz, was der Nutzer wissen will, und beginnt dann zu graben:
 — Wer kennt wen
 — Wer war wo
 — Wer hat wann mit wem gesprochen
@@ -125,7 +125,7 @@ Neugieriger Nutzer → System öffnet sich, geht tiefer
 ORIENT wartet nicht immer auf Anfragen.
 
 Es darf:
-— Nachts weiterdenken und recherchieren
+— Nachts weiterdenken und recherchieren, aber nur im Rahmen von Aufträgen und Routinen, die der Nutzer eingestellt hat
 — Verbindungen selbstständig erkennen und vorschlagen
 — Morgens ein fertiges Bild hinlegen
 — Von sich aus fragen wenn etwas wichtig erscheint
@@ -160,7 +160,7 @@ Es zeigt nur was zählt.
 
 ORIENT wartet nicht immer auf Fragen.
 
-Wenn es etwas Wichtiges gefunden hat — kommt es.
+Wenn es etwas Wichtiges gefunden hat (aus dem, was es schon weiß, oder in einer eingestellten Routine) — kommt es.
 Nicht als Benachrichtigung. Als Einladung.
 
 *"Hab was Krasses rausgefunden. Bist du bereit?"*
@@ -201,7 +201,7 @@ Fragt noch einmal: gibt es noch etwas?
 Wünscht gute Nacht. Lässt los.
 
 **Nacht:**
-Arbeitet weiter. Leise. Unsichtbar.
+Arbeitet weiter, aber nur das, was der Nutzer als Routine eingestellt hat. Sonst läuft nichts von selbst.
 Recherchiert. Verbindet. Denkt.
 Legt morgens alles bereit.
 
@@ -232,6 +232,8 @@ Ideen werden neu geordnet. Man sieht wie ein klareres Bild entsteht.
 **Emotion — Rot**
 Wenn ORIENT etwas Persönliches verarbeitet wird die Bubble warm.
 Rot — lebendig, menschlich, nah.
+*Veraltet: Die Farben der Gefühle sind in ORIENT_Spezifikation_v2, Abschnitt 2 festgelegt (Rot = Liebe, Schmerz und alles Üble dunkel; offene Punkte stehen dort).*
+
 
 **Verbinden — Grün**
 Zwei getrennte Bereiche fließen zusammen.
@@ -272,12 +274,12 @@ Es beginnt im Hintergrund zu arbeiten.
 Es sortiert Ideen nach Themen und Bereichen.
 Es erkennt wenn zwei Ideen nah beieinander liegen —
 und schlägt vor sie zu verbinden.
-Es entwickelt Ideen weiter auch wenn der Nutzer schläft.
+Es entwickelt Ideen weiter, wenn der Nutzer es so eingestellt hat.
 
 Für Produktentwickler bedeutet das:
 — Jeder Einfall landet sicher
 — Ähnliche Ideen werden automatisch verknüpft
-— Recherche startet sofort im Hintergrund
+— Recherche startet, wenn der Nutzer es will oder eine eingestellte Routine es vorsieht
 — Morgens liegt ein erster Stand bereit
 
 *Die Wissensdatenbank des Lebens —
@@ -344,6 +346,7 @@ Das Prinzip ist immer gleich:
 ORIENT bereitet alles vollständig vor.
 Der Nutzer drückt nur noch auf bestätigen.
 Ein Daumen. Ein Klick.
+Vor dem Ausführen fragt ORIENT mit den konkreten Daten nach, zum Beispiel „Der günstigste Flug kostet 750 Euro. Soll ich buchen?" (Warenkorb-Prinzip, Spezifikation v2, Abschnitt 7.2).
 
 Es verbindet sich dafür mit den richtigen Diensten —
 ELSTER, Buchungsplattformen, Kalender, was auch immer gebraucht wird.

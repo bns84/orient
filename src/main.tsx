@@ -8,7 +8,10 @@ import { registerSW } from 'virtual:pwa-register';
 import App from './App';
 import { AppServicesProvider } from './ui/wiring/AppServicesContext';
 
-registerSW({ immediate: true });
+/** Service Worker nur in Production — in Dev sonst oft alter Cache in Chrome. */
+if (import.meta.env.PROD) {
+  registerSW({ immediate: true });
+}
 
 ReactDOM.createRoot(document.getElementById('app')!).render(
   <React.StrictMode>

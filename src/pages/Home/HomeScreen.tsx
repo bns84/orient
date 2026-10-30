@@ -1,14 +1,12 @@
 /**
- * ORIENT — Hauptscreen nach Onboarding (Cursor Schritt 12)
+ * ORIENT — Hauptscreen nach Onboarding
  *
- * Layout: Header (Uhr + Mood) · Bubble ~60 % · Voice unten
- * Swipe rechts → Themen · Swipe unten → Sammelcontainer / Detail
+ * Sichtbar: Uhr, Name, Bubble, „Halten & sprechen.“, Voice.
+ * Themen, Sammlung, HUD und Modi nur mit ?debug=1.
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppServices } from '../../ui/wiring/AppServicesContext';
-import { useThreadTopics } from '../../hooks/useThreadTopics';
-import { useSwipePanels } from '../../hooks/useSwipePanels';
 import { VisualDebugCanvas } from '../../ui/components/VisualDebugCanvas';
 import { VoiceHoldButton } from '../../components/VoiceHoldButton';
 import { TextImpulseInput } from '../../components/TextImpulseInput';
@@ -18,6 +16,7 @@ import { MorningBriefing } from '../../components/MorningBriefing';
 import { EveningRitual } from '../../components/EveningRitual/EveningRitual';
 import { TopicList } from '../../components/TopicList';
 import { useDailyRituals } from '../../hooks/useDailyRituals';
+import { useThreadTopics } from '../../hooks/useThreadTopics';
 import { runAutoTopicEngine } from '../../services/auto-topic-engine';
 import {
   markPeriodicTopicReconcileDone,
@@ -38,34 +37,33 @@ import type { VisualState } from '../../visual/kernel/VisualState';
 import { startBehaviorSimulation } from '../../behavior/simulate';
 import { ContextMode } from '../../core/escalation/ContextMode';
 import { EscalationLevel } from '../../core/escalation/EscalationLevel';
-import { getPresentationHints } from '../../behavior/engine';
 import { useAppStore } from '../../store/useAppStore';
-import { recordTopicEngagement } from '../../db/interest';
 import { HomeHeader } from './HomeHeader';
 import { PresenceHud } from '../../components/PresenceHud';
 import { usePresenceHud } from '../../hooks/usePresenceHud';
 import { useBubbleKnowledge } from '../../hooks/useBubbleKnowledge';
 import './home-screen.css';
 
+const COMPANION_HINT = 'Halten & sprechen.';
+
 export function HomeScreen() {
   const services = useAppServices();
   const { topics: threadTopics, reload: reloadTopics } = useThreadTopics();
   const presence = useAppStore((s) => s.presence);
-  const { panel, goMain, goTopics, goDetail, onTouchStart, onTouchEnd } = useSwipePanels();
+  const pulsePresence = useAppStore((s) => s.pulsePresence);
 
   const [visualState, setVisualState] = useState<VisualState | null>(null);
   const [mode, setMode] = useState<ContextMode>(ContextMode.NORMAL);
-  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   const [interestRankKey, setInterestRankKey] = useState(0);
   const [collectionRefreshKey, setCollectionRefreshKey] = useState(0);
   const [bubbleSize, setBubbleSize] = useState(260);
+  const [debugThreadId, setDebugThreadId] = useState<string | null>(null);
   const bubbleSlotRef = useRef<HTMLDivElement>(null);
   const prevEscalationRef = useRef<EscalationLevel | null>(null);
-  const pulsePresence = useAppStore((s) => s.pulsePresence);
 
   const rituals = useDailyRituals(true);
   const hudRefreshKey = interestRankKey + collectionRefreshKey;
-  const presenceHud = usePresenceHud(selectedThreadId, hudRefreshKey);
+  const presenceHud = usePresenceHud(debugThreadId, hudRefreshKey);
   const {
     knowledge: bubbleKnowledgeSnapshot,
     working: bubbleDataWorking,
@@ -73,31 +71,10 @@ export function HomeScreen() {
     runWithWorking: runBubbleWorking,
   } = useBubbleKnowledge(hudRefreshKey);
   const bubbleWorking = bubbleDataWorking || presence === 'think';
-  const hints = getPresentationHints();
-  const companionLine =
-    hints?.tone === 'crisp'
-      ? "Sag's kurz. Ich bin da."
-      : hints?.tone === 'warm'
-        ? 'Ganz ruhig. Sag, was du brauchst.'
-        : 'Halten & sprechen.';
 
   const bumpTopicRank = useCallback(() => {
     setInterestRankKey((k) => k + 1);
   }, []);
-
-  const onSelectTopic = useCallback(
-    (key: string) => {
-      setSelectedThreadId((prev) => {
-        const next = prev === key ? null : key;
-        if (next) {
-          void recordTopicEngagement(next, 'focus').then(() => bumpTopicRank());
-          goDetail();
-        }
-        return next;
-      });
-    },
-    [bumpTopicRank, goDetail],
-  );
 
   useEffect(() => {
     const el = bubbleSlotRef.current;
@@ -109,43 +86,39 @@ export function HomeScreen() {
     return () => ro.disconnect();
   }, []);
 
-  const refreshVisual = useCallback(
-    async (contextMode?: ContextMode) => {
-      const ctx = await services.contextService.getCurrent();
-      const activeMode = contextMode ?? ctx.mode;
-      setMode(activeMode);
+  const refreshVisual = useCallback(async () => {
+    const ctx = await services.contextService.getCurrent();
+    setMode(ctx.mode);
 
-      const daily = await services.dailyQuery.getDailyView({
-        contextMode: activeMode,
-        allowHints: true,
-        hintBudgetRemaining: ctx.hintBudgetPerDay ?? 3,
-      });
+    const daily = await services.dailyQuery.getDailyView({
+      contextMode: ctx.mode,
+      allowHints: true,
+      hintBudgetRemaining: ctx.hintBudgetPerDay ?? 3,
+    });
 
-      const edges = await services.edgeRepo.getAll();
-      const threads = await services.threadRepo.getAll();
-      const clusterHint = {
-        byThreadId: Object.fromEntries(threads.map((t) => [t.id, t.title])),
-      };
+    const edges = await services.edgeRepo.getAll();
+    const threads = await services.threadRepo.getAll();
+    const clusterHint = {
+      byThreadId: Object.fromEntries(threads.map((t) => [t.id, t.title])),
+    };
 
-      const vs = VisualStatePipeline.build({
-        dailyView: daily,
-        edges: edges as Parameters<typeof VisualStatePipeline.build>[0]['edges'],
-        context:
-          activeMode === ContextMode.QUIET
-            ? 'QUIET'
-            : activeMode === ContextMode.FOCUS
-              ? 'FOCUS'
-              : 'NORMAL',
-        clusterHint,
-      });
+    const vs = VisualStatePipeline.build({
+      dailyView: daily,
+      edges: edges as Parameters<typeof VisualStatePipeline.build>[0]['edges'],
+      context:
+        ctx.mode === ContextMode.QUIET
+          ? 'QUIET'
+          : ctx.mode === ContextMode.FOCUS
+            ? 'FOCUS'
+            : 'NORMAL',
+      clusterHint,
+    });
 
-      setVisualState(vs);
-    },
-    [services],
-  );
+    setVisualState(vs);
+  }, [services]);
 
   const reconcileTopics = useCallback(
-    async (fullCatalog = false) => {
+    async (fullCatalog = true) => {
       const scope = fullCatalog || shouldRunPeriodicTopicReconcile() ? 'full' : 'recent';
       const result = await runAutoTopicEngine(
         {
@@ -182,8 +155,12 @@ export function HomeScreen() {
   ]);
 
   useEffect(() => {
-    void reconcileTopics(shouldRunPeriodicTopicReconcile()).then(() => reloadTopics());
-  }, [reconcileTopics, reloadTopics]);
+    void reconcileTopics(true).then(() => {
+      reloadTopics();
+      setCollectionRefreshKey((k) => k + 1);
+      bumpTopicRank();
+    });
+  }, [reconcileTopics, reloadTopics, bumpTopicRank]);
 
   useEffect(() => {
     return startTopicReconcileSchedule(async () => {
@@ -218,187 +195,120 @@ export function HomeScreen() {
     prevEscalationRef.current = level;
   }, [presenceHud?.escalationLevel, presenceHud?.visible, presenceHud?.hasFocus, pulsePresence]);
 
-  const applyMode = async (m: ContextMode) => {
-    await services.contextService.setMode(m);
-    await refreshVisual(m);
-  };
-
-  const closeDetail = () => {
-    goMain();
-  };
-
   return (
-    <div className="home-screen" data-detail-open={panel === 'detail' || undefined}>
+    <div className="home-screen">
       <HomeHeader />
 
-      <PresenceHud hud={presenceHud} />
-
-      {rituals.morning.visible && rituals.morning.lines ? (
-        <div className="home-morning">
-          <MorningBriefing
-            lines={rituals.morning.lines}
-            onDismiss={() => void rituals.morning.dismiss()}
-          />
-        </div>
-      ) : null}
-
-      {rituals.evening.visible && rituals.evening.line ? (
-        <EveningRitual
-          line={rituals.evening.line}
-          onDismiss={() => void rituals.evening.dismiss()}
-        />
-      ) : null}
-
-      <div className="home-body">
-        <div
-          className="home-h-track"
-          data-panel={panel === 'topics' ? 'topics' : 'main'}
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}
-        >
-          <section className="home-h-panel home-main" aria-label="Präsenz">
-            <div ref={bubbleSlotRef} className="home-bubble-slot">
-              <OrientBubble
-                state={presence}
-                contextMode={mode}
-                escalationLevel={presenceHud?.escalationLevel}
-                knowledge={bubbleKnowledgeSnapshot}
-                working={bubbleWorking}
-                sortHighlightRegion={sortHighlightRegion}
-                width={bubbleSize}
-                height={bubbleSize}
-              />
-            </div>
-            <p className="home-main__hint">{companionLine}</p>
-            <div className="home-main__affordances">
-              <button type="button" className="home-affordance" onClick={goTopics}>
-                → Themen
-              </button>
-              <button type="button" className="home-affordance" onClick={goDetail}>
-                ↓ Sammlung
-              </button>
-            </div>
-          </section>
-
-          <section className="home-h-panel home-topics" aria-label="Themen">
-            {panel === 'topics' ? (
-              <button type="button" className="home-back" onClick={goMain}>
-                ← Zurück
-              </button>
-            ) : null}
-            <div className="home-topics__title">Themen</div>
-            {threadTopics.length > 0 ? (
-              <TopicList
-                topics={threadTopics}
-                selectedKey={selectedThreadId}
-                onSelectTopic={onSelectTopic}
-                interestRankKey={interestRankKey}
-                listTitle=""
-              />
-            ) : (
-              <p style={{ fontSize: 13, opacity: 0.55 }}>
-                Noch keine Themen — Gedanken landen im Sammelcontainer, ORIENT ordnet später zu.
-              </p>
-            )}
-          </section>
-        </div>
-
-        <div className="home-detail-overlay" data-open={panel === 'detail'}>
-          <div className="home-detail-sheet" role="dialog" aria-modal={panel === 'detail'}>
-            <div className="home-detail-handle" aria-hidden />
-            <button type="button" className="home-back" onClick={closeDetail}>
-              ↑ Schließen
-            </button>
-
-            <div className="home-detail__section">
-              <div className="home-detail__section-title">Sammelcontainer</div>
-              <CollectionInbox refreshKey={collectionRefreshKey} />
-            </div>
-
-            {selectedThreadId ? (
-              <div className="home-detail__section">
-                <div className="home-detail__section-title">Thema im Fokus</div>
-                <ThreadDetailPanel
-                  threadId={selectedThreadId}
-                  onChanged={() => void onDataChanged()}
-                  onClose={() => setSelectedThreadId(null)}
-                />
-              </div>
-            ) : null}
-
-            <div className="home-detail__section">
-              <div className="home-detail__section-title">Gedanke</div>
-              <TextImpulseInput
-                threadId={selectedThreadId}
-                reconcileTopics={reconcileTopics}
-                onCaptured={() => void onDataChanged()}
-              />
-            </div>
-
-            <DebugOnly>
-              <div
-                style={{
-                  marginTop: 18,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 12,
-                  opacity: 0.9,
-                  padding: 16,
-                  borderRadius: 14,
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  background: 'rgba(255,255,255,0.04)',
-                }}
-              >
-                <div style={{ fontSize: 12, opacity: 0.7 }}>Debug</div>
-                <div style={{ height: 220 }}>
-                  <VisualDebugCanvas state={visualState} />
-                </div>
-                <NewTopicQuick onCreated={() => void onDataChanged()} />
-                <EventList limit={30} />
-                <VoiceList />
-                <GraphInspector />
-                <BehaviorSnapshot />
-                <OverviewPanel />
-                <DBExportImport />
-              </div>
-            </DebugOnly>
+      <main className="home-body">
+        <section className="home-main" aria-label="Präsenz">
+          <div ref={bubbleSlotRef} className="home-bubble-slot">
+            <OrientBubble
+              state={presence}
+              contextMode={mode}
+              escalationLevel={presenceHud?.escalationLevel}
+              knowledge={bubbleKnowledgeSnapshot}
+              working={bubbleWorking}
+              sortHighlightRegion={sortHighlightRegion}
+              width={bubbleSize}
+              height={bubbleSize}
+            />
           </div>
-        </div>
-      </div>
+          <p className="home-main__hint">{COMPANION_HINT}</p>
+        </section>
+      </main>
 
       <footer className="home-footer">
-        <div className="home-footer__context">
-          <button
-            type="button"
-            className="home-context-btn"
-            data-active={mode === ContextMode.QUIET}
-            onClick={() => void applyMode(ContextMode.QUIET)}
-          >
-            Ruhe
-          </button>
-          <button
-            type="button"
-            className="home-context-btn"
-            data-active={mode === ContextMode.NORMAL}
-            onClick={() => void applyMode(ContextMode.NORMAL)}
-          >
-            Normal
-          </button>
-          <button
-            type="button"
-            className="home-context-btn"
-            data-active={mode === ContextMode.FOCUS}
-            onClick={() => void applyMode(ContextMode.FOCUS)}
-          >
-            Fokus
-          </button>
-        </div>
         <VoiceHoldButton
-          threadId={selectedThreadId}
+          threadId={null}
           reconcileTopics={reconcileTopics}
           onImpulseCaptured={() => void onDataChanged()}
         />
       </footer>
+
+      <DebugOnly>
+        <div className="home-debug">
+          <PresenceHud hud={presenceHud} />
+
+          {rituals.morning.visible && rituals.morning.lines ? (
+            <MorningBriefing
+              lines={rituals.morning.lines}
+              onDismiss={() => void rituals.morning.dismiss()}
+            />
+          ) : null}
+
+          {rituals.evening.visible && rituals.evening.line ? (
+            <EveningRitual
+              line={rituals.evening.line}
+              onDismiss={() => void rituals.evening.dismiss()}
+            />
+          ) : null}
+
+          <div className="home-debug__section">
+            <div className="home-debug__title">Themen (Debug)</div>
+            {threadTopics.length > 0 ? (
+              <TopicList
+                topics={threadTopics}
+                selectedKey={debugThreadId}
+                onSelectTopic={(key) =>
+                  setDebugThreadId((prev) => (prev === key ? null : key))
+                }
+                interestRankKey={interestRankKey}
+                listTitle=""
+              />
+            ) : (
+              <p className="home-debug__empty">Noch keine Themen.</p>
+            )}
+          </div>
+
+          <div className="home-debug__section">
+            <div className="home-debug__title">Sammelcontainer</div>
+            <CollectionInbox
+              refreshKey={collectionRefreshKey}
+              onReconcileTopics={() => reconcileTopics(true)}
+              onReconcileDone={async () => {
+                await reloadTopics();
+                bumpTopicRank();
+                setCollectionRefreshKey((k) => k + 1);
+                await refreshVisual();
+              }}
+            />
+          </div>
+
+          {debugThreadId ? (
+            <div className="home-debug__section">
+              <div className="home-debug__title">Thema im Fokus</div>
+              <ThreadDetailPanel
+                threadId={debugThreadId}
+                onChanged={() => void onDataChanged()}
+                onClose={() => setDebugThreadId(null)}
+              />
+            </div>
+          ) : null}
+
+          <div className="home-debug__section">
+            <div className="home-debug__title">Gedanke (Text)</div>
+            <TextImpulseInput
+              threadId={debugThreadId}
+              reconcileTopics={reconcileTopics}
+              onCaptured={() => void onDataChanged()}
+            />
+          </div>
+
+          <div className="home-debug__tools">
+            <div className="home-debug__title">Werkzeuge</div>
+            <div className="home-debug__canvas">
+              <VisualDebugCanvas state={visualState} />
+            </div>
+            <NewTopicQuick onCreated={() => void onDataChanged()} />
+            <EventList limit={30} />
+            <VoiceList />
+            <GraphInspector />
+            <BehaviorSnapshot />
+            <OverviewPanel />
+            <DBExportImport />
+          </div>
+        </div>
+      </DebugOnly>
     </div>
   );
 }

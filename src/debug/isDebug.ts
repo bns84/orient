@@ -11,7 +11,8 @@
 export function isDebugEnabled() {
   try {
     const url = new URL(window.location.href);
-    if (url.searchParams.get('debug') === '1') return true;
-  } catch {}
-  return localStorage.getItem('orient_debug') === '1';
+    return url.searchParams.get('debug') === '1';
+  } catch {
+    return false;
+  }
 }
